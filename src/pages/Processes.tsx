@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { 
   FileText, 
@@ -12,80 +12,69 @@ import {
   Plus, 
   RefreshCw, 
   Check, 
-  Loader, 
-  StopCircle, 
-  ArrowRight,
-  Columns,
-  Search
+  Equals, 
+  ChevronDown, 
+  ChevronLeft, 
+  ChevronRight,
+  Search,
+  Columns
 } from 'lucide-react';
 
 interface Process {
   id: string;
   name: string;
-  machine: string;
   type: string;
-  state: 'Successful' | 'Pending' | 'Stopped';
-  priority: 'High' | 'Normal' | 'Low';
-  started: string;
-  ended: string;
-  source: 'Manual' | 'Assistant';
+  version: string;
+  priority: 'High' | 'Medium' | 'Low';
+  entryPoint: string;
+  description: string;
 }
 
 const processes: Process[] = [
   {
     id: '1',
-    name: 'Hello.Orchestrator2',
-    machine: 'DESKTOP-******',
-    type: 'RPA Developer Pro',
-    state: 'Successful',
-    priority: 'Normal',
-    started: '3 minutes ago',
-    ended: '3 minutes ago',
-    source: 'Manual'
+    name: 'GenAICase003',
+    type: 'RPA',
+    version: '1.0.7',
+    priority: 'Medium',
+    entryPoint: 'Main.xaml',
+    description: 'Satış ve İnsan Kaynakları power BI raporlarından içgörü çıkaran ve özetleme yapan akıllı süreç.'
   },
   {
     id: '2',
-    name: 'Invoice.Processing',
-    machine: 'SERVER-******',
-    type: 'Development',
-    state: 'Pending',
+    name: 'InvoiceProcessing',
+    type: 'RPA',
+    version: '2.1.3',
     priority: 'High',
-    started: '15 minutes ago',
-    ended: '-',
-    source: 'Assistant'
+    entryPoint: 'Process.xaml',
+    description: 'Otomatik fatura işleme süreçleri için AI destekli OCR tabanlı doküman işleme sistemi.'
   },
   {
     id: '3',
-    name: 'Customer.Onboarding',
-    machine: 'CLOUD-******',
-    type: 'RPA Developer Pro',
-    state: 'Stopped',
+    name: 'CustomerOnboarding',
+    type: 'Workflow',
+    version: '0.9.5',
     priority: 'Low',
-    started: '1 hour ago',
-    ended: '45 minutes ago',
-    source: 'Manual'
+    entryPoint: 'Onboarding.xaml',
+    description: 'Yeni müşterilerin sistem entegrasyonu ve ilk veri girişlerinin otomatikleştirilmesi.'
   },
   {
     id: '4',
-    name: 'Data.Extraction',
-    machine: 'SERVER-******',
-    type: 'Development',
-    state: 'Successful',
-    priority: 'Normal',
-    started: '2 hours ago',
-    ended: '1 hour ago',
-    source: 'Assistant'
+    name: 'ReportAutomation',
+    type: 'RPA',
+    version: '1.2.0',
+    priority: 'Medium',
+    entryPoint: 'Dashboard.xaml',
+    description: 'Haftalık ve aylık performans raporlarını hazırlayan ve ilgili paydaşlara e-posta ile dağıtan otomasyon.'
   },
   {
     id: '5',
-    name: 'Report.Generation',
-    machine: 'DESKTOP-******',
-    type: 'RPA Developer Pro',
-    state: 'Successful',
+    name: 'HRDataSynchronization',
+    type: 'Integration',
+    version: '3.0.1',
     priority: 'High',
-    started: '5 hours ago',
-    ended: '4 hours ago',
-    source: 'Manual'
+    entryPoint: 'SyncData.xaml',
+    description: 'İnsan kaynakları veritabanı ile ERP sistemi arasında çift yönlü veri senkronizasyonu sağlayan entegrasyon.'
   }
 ];
 
@@ -93,6 +82,8 @@ const Processes = () => {
   const [selectedProcesses, setSelectedProcesses] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [itemsPerPage, setItemsPerPage] = useState(25);
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Handle window resize for responsive layout
   React.useEffect(() => {
@@ -119,15 +110,15 @@ const Processes = () => {
     }
   };
 
-  const StateIcon = ({ state }: { state: Process['state'] }) => {
-    switch (state) {
-      case 'Successful':
-        return <Check className="h-5 w-5 text-green-500" />;
-      case 'Pending':
-        return <Loader className="h-5 w-5 text-amber-500 animate-spin" />;
-      case 'Stopped':
-        return <StopCircle className="h-5 w-5 text-gray-500" />;
-    }
+  const getVersionBadge = (version: string) => (
+    <div className="flex items-center gap-1.5">
+      <span>{version}</span>
+      <Check className="h-4 w-4 text-green-500" />
+    </div>
+  );
+
+  const getPriorityIcon = (priority: Process['priority']) => {
+    return <Equals className="h-4 w-4 text-gray-500 ml-1" />;
   };
 
   return (
@@ -173,15 +164,15 @@ const Processes = () => {
       {isMobile && (
         <div className="space-y-4">
           {processes.map((process) => (
-            <Card key={process.id} className="p-4 hover:bg-gray-50 transition-colors">
+            <Card key={process.id} className="p-4 hover:bg-gray-50 transition-colors shadow-sm border border-[#F5F5F5] rounded-xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <FileText className="h-5 w-5 text-gray-500" />
                   <div>
                     <h3 className="font-medium text-gray-900">{process.name}</h3>
                     <div className="flex items-center mt-1 text-sm text-gray-500">
-                      <StateIcon state={process.state} />
-                      <span className="ml-1">{process.state}</span>
+                      <span className="mr-2">Version: {process.version}</span>
+                      <Check className="h-4 w-4 text-green-500" />
                     </div>
                   </div>
                 </div>
@@ -200,12 +191,12 @@ const Processes = () => {
               </div>
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-gray-600">
                 <div>
-                  <p className="font-semibold">Started</p>
-                  <p>{process.started}</p>
+                  <p className="font-semibold">Entry Point</p>
+                  <p>{process.entryPoint}</p>
                 </div>
                 <div>
-                  <p className="font-semibold">Source</p>
-                  <p>{process.source}</p>
+                  <p className="font-semibold">Priority</p>
+                  <p className="flex items-center">{process.priority} {getPriorityIcon(process.priority)}</p>
                 </div>
               </div>
               <Button variant="outline" size="sm" className="w-full mt-3">
@@ -229,14 +220,12 @@ const Processes = () => {
                       onCheckedChange={(checked) => handleSelectAll(!!checked)} 
                     />
                   </TableHead>
-                  <TableHead>Process Name</TableHead>
-                  <TableHead>Connected Machine</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead>Type</TableHead>
-                  <TableHead>State</TableHead>
+                  <TableHead>Version</TableHead>
                   <TableHead>Priority</TableHead>
-                  <TableHead>Started</TableHead>
-                  <TableHead>Ended</TableHead>
-                  <TableHead>Source</TableHead>
+                  <TableHead>Entry Point</TableHead>
+                  <TableHead className="max-w-[300px]">Description</TableHead>
                   <TableHead className="w-12">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -258,23 +247,20 @@ const Processes = () => {
                         {process.name}
                       </div>
                     </TableCell>
-                    <TableCell>{process.machine}</TableCell>
                     <TableCell>{process.type}</TableCell>
+                    <TableCell>{getVersionBadge(process.version)}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1.5">
-                        <StateIcon state={process.state} />
-                        <span>{process.state}</span>
+                      <div className="flex items-center">
+                        {process.priority}
+                        {getPriorityIcon(process.priority)}
                       </div>
                     </TableCell>
+                    <TableCell>{process.entryPoint}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-1.5">
-                        <span>{process.priority}</span>
-                        {process.priority === 'Normal' && <ArrowRight className="h-4 w-4" />}
-                      </div>
+                      <span className="line-clamp-1 max-w-[300px]" title={process.description}>
+                        {process.description}
+                      </span>
                     </TableCell>
-                    <TableCell>{process.started}</TableCell>
-                    <TableCell>{process.ended}</TableCell>
-                    <TableCell>{process.source}</TableCell>
                     <TableCell className="text-right">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -293,6 +279,35 @@ const Processes = () => {
                 ))}
               </TableBody>
             </Table>
+          </div>
+          
+          {/* Pagination Controls */}
+          <div className="flex items-center justify-between p-4 border-t border-gray-100">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <span>Items per page:</span>
+              <select 
+                className="border border-gray-200 rounded p-1 text-sm"
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              >
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+              </select>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-500">Page {currentPage} of 1</span>
+              <div className="flex gap-1">
+                <Button variant="outline" size="sm" disabled className="p-0 w-8 h-8">
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm" disabled className="p-0 w-8 h-8">
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
