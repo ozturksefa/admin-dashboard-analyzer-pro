@@ -1,81 +1,74 @@
-
 import { 
   LayoutDashboard, 
   Bot, 
-  Settings, 
-  Users, 
+  Play, 
   Calendar, 
   Briefcase, 
-  FileStack, 
-  Database, 
-  AlertTriangle,
-  LucideIcon,
-  ShieldCheck
+  ListOrdered, 
+  Package, 
+  AlertCircle,
+  Users,
+  Shield,
+  Settings
 } from "lucide-react";
 
-export type NavItem = {
-  title: string;
-  icon: LucideIcon;
-  href: string;
-};
-
-export const sidebarItems: NavItem[] = [
+export const sidebarItems = [
   {
     title: "Dashboard",
-    icon: LayoutDashboard,
     href: "/",
+    icon: LayoutDashboard
   },
   {
     title: "Robots",
-    icon: Bot,
     href: "/robots",
+    icon: Bot
   },
   {
     title: "Processes",
-    icon: FileStack,
     href: "/processes",
+    icon: Play
   },
   {
     title: "Schedules",
-    icon: Calendar,
     href: "/schedules",
+    icon: Calendar
   },
   {
     title: "Jobs",
-    icon: Briefcase,
     href: "/jobs",
+    icon: Briefcase
   },
   {
     title: "Queues",
-    icon: FileStack,
     href: "/queues",
+    icon: ListOrdered
   },
   {
     title: "Assets",
-    icon: Database,
     href: "/assets",
+    icon: Package
   },
   {
     title: "Exceptions",
-    icon: AlertTriangle,
     href: "/exceptions",
+    icon: AlertCircle
   },
 ];
 
-export const adminItems: NavItem[] = [
+export const adminItems = [
   {
     title: "Users",
-    icon: Users,
     href: "/users",
+    icon: Users
   },
   {
     title: "Roles",
-    icon: ShieldCheck,
     href: "/roles",
+    icon: Shield
   },
   {
     title: "Settings",
-    icon: Settings,
     href: "/settings",
-  },
+    icon: Settings
+  }
 ];
