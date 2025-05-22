@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Robot, Briefcase, AlertTriangle, FileStack, Clock, ActivitySquare, BarChart3, Gauge } from 'lucide-react';
+import { Bot, Briefcase, AlertTriangle, FileStack, Clock, ActivitySquare, BarChart3, Gauge } from 'lucide-react';
 import StatCard from '../components/dashboard/StatCard';
 import ChartCard from '../components/dashboard/ChartCard';
 import { DonutChart, BarChartComponent, TrendChart } from '../components/dashboard/Charts';
@@ -32,7 +32,7 @@ const Dashboard = () => {
           title="Total Robots" 
           value="42" 
           change={8} 
-          icon={<Robot size={20} />}
+          icon={<Bot size={20} />}
         />
         <StatCard 
           title="Active Jobs" 

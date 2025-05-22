@@ -1,7 +1,7 @@
 
 import { 
   LayoutDashboard, 
-  Robot, 
+  Bot, 
   Settings, 
   Users, 
   Calendar, 
@@ -27,7 +27,7 @@ export const sidebarItems: NavItem[] = [
   },
   {
     title: "Robots",
-    icon: Robot,
+    icon: Bot,
     href: "/robots",
   },
   {
