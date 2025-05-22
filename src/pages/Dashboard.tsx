@@ -1,98 +1,142 @@
 
-import React from 'react';
-import { CalendarIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Robot, Briefcase, AlertTriangle, FileStack, Clock, ActivitySquare, BarChart3, Gauge } from 'lucide-react';
 import StatCard from '../components/dashboard/StatCard';
 import ChartCard from '../components/dashboard/ChartCard';
-import RecentActivities from '../components/dashboard/RecentActivities';
-import RobotUtilization from '../components/dashboard/RobotUtilization';
-import { DonutChart, GaugeChart, TrendChart } from '../components/dashboard/Charts';
-import { Briefcase, Users, Calendar } from 'lucide-react';
+import { DonutChart, BarChartComponent, TrendChart } from '../components/dashboard/Charts';
+import DateSelector from '../components/dashboard/DateSelector';
+import TimeFilter from '../components/dashboard/TimeFilter';
+import AISuggestion from '../components/dashboard/AISuggestion';
 
 const Dashboard = () => {
+  const [timeFilter, setTimeFilter] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  
+  const handleRefresh = () => {
+    console.log('Refreshing dashboard data...');
+    // Implement data refresh logic here
+  };
+
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-normal text-[#171717]">Dashboard</h1>
-        <button className="flex items-center px-4 py-2 text-sm bg-white border border-[#E5E5E5] rounded shadow-sm">
-          <CalendarIcon size={14} className="mr-2 text-[#404040]" />
-          <span className="text-[#404040]">1–31 May 2025</span>
-        </button>
+    <div className="max-w-full">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+        <div>
+          <h1 className="text-2xl font-medium text-gray-900">Welcome, Admin</h1>
+          <p className="text-sm text-gray-500 mt-1">Here's what's happening with your automation processes</p>
+        </div>
+        <DateSelector date="May 19, 2025" onRefresh={handleRefresh} />
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      {/* Summary Metrics - First Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatCard 
-          title="Jobs" 
-          value="234" 
-          label="Completed this month" 
-          icon={<Briefcase size={16} className="text-white" />}
+          title="Total Robots" 
+          value="42" 
+          change={8} 
+          icon={<Robot size={20} />}
         />
         <StatCard 
-          title="Robots" 
-          value="8" 
-          label="Active today" 
-          icon={<Users size={16} className="text-white" />}
+          title="Active Jobs" 
+          value="12" 
+          change={12} 
+          icon={<Briefcase size={20} />}
+          iconBg="bg-blue-600"
         />
         <StatCard 
-          title="Schedules" 
-          value="15" 
-          label="Upcoming" 
-          icon={<Calendar size={16} className="text-white" />}
+          title="Failed Jobs" 
+          value="3" 
+          change={2} 
+          icon={<AlertTriangle size={20} />}
+          iconBg="bg-red-600"
         />
         <StatCard 
-          title="Users" 
-          value="23" 
-          label="Registered" 
-          icon={<Users size={16} className="text-white" />}
+          title="Queue Items" 
+          value="256" 
+          change={-5} 
+          icon={<FileStack size={20} />}
+          iconBg="bg-amber-600"
         />
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <ChartCard title="Job Durum Dağılımı">
+      {/* Extended Metrics - Second Row */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard 
+          title="FTE Saving" 
+          value="120h" 
+          change={15} 
+          icon={<Clock size={20} />}
+          iconBg="bg-emerald-600"
+        />
+        <StatCard 
+          title="Transaction Count" 
+          value="1,987" 
+          change={7} 
+          icon={<ActivitySquare size={20} />}
+          iconBg="bg-violet-600"
+        />
+        <StatCard 
+          title="Total Runtime" 
+          value="320h" 
+          change={5} 
+          icon={<BarChart3 size={20} />}
+          iconBg="bg-cyan-600"
+        />
+        <StatCard 
+          title="Robot Utilization" 
+          value="82%" 
+          change={3} 
+          icon={<Gauge size={20} />}
+          iconBg="bg-indigo-600"
+        />
+      </div>
+      
+      {/* Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <ChartCard title="Job Status Distribution">
           <DonutChart />
         </ChartCard>
-        <ChartCard title="Robot Kullanım Oranları">
-          <GaugeChart />
+        <ChartCard title="Robot Utilization">
+          <BarChartComponent />
         </ChartCard>
       </div>
       
-      <div className="mb-10">
-        <div className="bg-white p-6 rounded-xl border border-[#F5F5F5] shadow-sm h-[330px]">
-          <div className="flex items-center">
-            <CalendarIcon size={16} className="text-[#404040]" />
-            <h2 className="text-base font-normal text-[#171717] ml-2">Trendler</h2>
+      {/* Trends Chart */}
+      <div className="mb-8">
+        <div className="bg-white p-6 rounded-xl border border-[#F5F5F5] shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-base font-medium text-[#171717]">Job Performance Trends</h2>
+            <TimeFilter activeFilter={timeFilter} onChange={setTimeFilter} />
           </div>
-          <div className="mt-4 h-[240px] bg-[#E5E5E5] rounded-lg flex items-center justify-center">
+          <div className="h-[350px]">
             <TrendChart />
           </div>
         </div>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <RecentActivities />
-        <RobotUtilization />
-      </div>
-      
-      {/* AI Recommendations Section */}
-      <div className="bg-white p-6 rounded-xl border border-[#F5F5F5] shadow-sm mb-4">
-        <h2 className="text-base font-normal text-[#171717] mb-4">AI Önerileri</h2>
-        <div className="space-y-4">
-          <div className="p-4 border border-gray-100 rounded-lg">
-            <div className="flex justify-between">
-              <h3 className="font-medium">Process Name: Invoice Processing</h3>
-              <span className="text-green-600">Confidence: 92%</span>
-            </div>
-            <p className="mt-2 text-gray-600">
-              Implement OCR to extract data from invoices automatically. This could save approximately 120 hours monthly.
-            </p>
-          </div>
-          <div className="p-4 border border-gray-100 rounded-lg">
-            <div className="flex justify-between">
-              <h3 className="font-medium">Process Name: Customer Onboarding</h3>
-              <span className="text-green-600">Confidence: 87%</span>
-            </div>
-            <p className="mt-2 text-gray-600">
-              Automating verification steps could reduce processing time by 65% and improve accuracy.
-            </p>
+      {/* AI Suggestions */}
+      <div className="mb-8">
+        <div className="bg-white p-6 rounded-xl border border-[#F5F5F5] shadow-sm">
+          <h2 className="text-base font-medium text-[#171717] mb-4">AI Destekli Süreç Önerileri</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <AISuggestion 
+              process="Fatura Onay" 
+              suggestion="Süreç %87 başarıyla otomatize edilebilir."
+              confidence={87}
+            />
+            <AISuggestion 
+              process="Müşteri Kayıt" 
+              suggestion="Doğrulama adımları otomatize edilerek işlem süresi %65 azaltılabilir."
+              confidence={82}
+            />
+            <AISuggestion 
+              process="Veri Doğrulama" 
+              suggestion="Makine öğrenmesi modeli ile doğruluk oranı %92'ye çıkarılabilir."
+              confidence={95}
+            />
+            <AISuggestion 
+              process="Rapor Oluşturma" 
+              suggestion="İşlem hacmi %40 artırılabilir ve manuel hatalar önlenebilir."
+              confidence={78}
+            />
           </div>
         </div>
       </div>

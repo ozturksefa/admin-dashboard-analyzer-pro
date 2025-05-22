@@ -1,105 +1,60 @@
 
 import React from 'react';
-import { LayoutDashboard, Users, Settings, LogOut, Briefcase, Calendar } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
+import { sidebarItems, adminItems } from '../utils/icons';
+import { cn } from '@/lib/utils';
 
 const Sidebar = () => {
   return (
-    <aside className="w-[260px] h-full bg-white border-r border-[#F5F5F5]">
-      <nav className="p-4 flex flex-col h-full">
-        <div className="space-y-1 flex-1">
-          <NavLink 
-            to="/" 
-            className={({ isActive }) => 
-              `flex items-center px-3 py-2.5 text-base rounded-lg ${
-                isActive 
-                  ? 'bg-[#F5F5F5] font-medium text-[#171717]' 
-                  : 'text-[#404040] hover:bg-gray-50'
-              }`
-            }
-          >
-            <LayoutDashboard size={16} className="mr-6" />
-            Dashboard
-          </NavLink>
-          
-          <NavLink 
-            to="/robots" 
-            className={({ isActive }) => 
-              `flex items-center px-3 py-2.5 text-base rounded-lg ${
-                isActive 
-                  ? 'bg-[#F5F5F5] font-medium text-[#171717]' 
-                  : 'text-[#404040] hover:bg-gray-50'
-              }`
-            }
-          >
-            <Users size={16} className="mr-6" />
-            Robots
-          </NavLink>
-          
-          <NavLink 
-            to="/jobs" 
-            className={({ isActive }) => 
-              `flex items-center px-3 py-2.5 text-base rounded-lg ${
-                isActive 
-                  ? 'bg-[#F5F5F5] font-medium text-[#171717]' 
-                  : 'text-[#404040] hover:bg-gray-50'
-              }`
-            }
-          >
-            <Briefcase size={16} className="mr-6" />
-            Jobs
-          </NavLink>
-          
-          <NavLink 
-            to="/schedules" 
-            className={({ isActive }) => 
-              `flex items-center px-3 py-2.5 text-base rounded-lg ${
-                isActive 
-                  ? 'bg-[#F5F5F5] font-medium text-[#171717]' 
-                  : 'text-[#404040] hover:bg-gray-50'
-              }`
-            }
-          >
-            <Calendar size={16} className="mr-6" />
-            Schedules
-          </NavLink>
-          
-          <NavLink 
-            to="/users" 
-            className={({ isActive }) => 
-              `flex items-center px-3 py-2.5 text-base rounded-lg ${
-                isActive 
-                  ? 'bg-[#F5F5F5] font-medium text-[#171717]' 
-                  : 'text-[#404040] hover:bg-gray-50'
-              }`
-            }
-          >
-            <Users size={16} className="mr-6" />
-            Users
-          </NavLink>
-
-          <NavLink 
-            to="/settings" 
-            className={({ isActive }) => 
-              `flex items-center px-3 py-2.5 text-base rounded-lg mt-6 ${
-                isActive 
-                  ? 'bg-[#F5F5F5] font-medium text-[#171717]' 
-                  : 'text-[#404040] hover:bg-gray-50'
-              }`
-            }
-          >
-            <Settings size={16} className="mr-6" />
-            Settings
-          </NavLink>
+    <aside className="w-[260px] h-full bg-white border-r border-[#E5E5E5] flex-shrink-0 hidden md:block">
+      <div className="p-4">
+        <div className="flex items-center gap-2 py-2 px-2 rounded-lg bg-gray-50 mb-4">
+          <span className="w-9 h-9 bg-[#262626] rounded-lg flex items-center justify-center text-white font-medium">
+            D
+          </span>
+          <div className="flex-1">
+            <span className="text-sm font-medium text-gray-900">Default Tenant</span>
+          </div>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-500">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
         </div>
         
-        <div className="mt-auto pt-4">
-          <button className="flex items-center px-3 py-2 text-sm text-[#737373] hover:bg-gray-50 w-full rounded-lg">
-            <LogOut size={14} className="mr-[22px]" />
-            Logout
-          </button>
+        <nav className="space-y-1">
+          {sidebarItems.map((item) => (
+            <NavLink 
+              key={item.title}
+              to={item.href}
+              className={({ isActive }) => cn(
+                "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
+                isActive ? "bg-[#F5F5F5] text-[#171717] font-medium" : "text-[#404040] hover:bg-gray-50"
+              )}
+            >
+              <item.icon size={18} className="flex-shrink-0" />
+              <span>{item.title}</span>
+            </NavLink>
+          ))}
+        </nav>
+        
+        <div className="mt-6 pt-4 border-t border-[#E5E5E5]">
+          <p className="text-xs font-medium text-gray-500 px-3 mb-2">ADMINISTRATION</p>
+          <nav className="space-y-1">
+            {adminItems.map((item) => (
+              <NavLink 
+                key={item.title}
+                to={item.href}
+                className={({ isActive }) => cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-md text-sm transition-colors",
+                  isActive ? "bg-[#F5F5F5] text-[#171717] font-medium" : "text-[#404040] hover:bg-gray-50"
+                )}
+              >
+                <item.icon size={18} className="flex-shrink-0" />
+                <span>{item.title}</span>
+              </NavLink>
+            ))}
+          </nav>
         </div>
-      </nav>
+      </div>
     </aside>
   );
 };
