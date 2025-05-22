@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from "@/components/ui/button";
-import { Play, FileExport } from 'lucide-react';
+import { Play, FileText } from 'lucide-react';
 
 const JobsHeader = () => {
   return (
@@ -16,7 +16,7 @@ const JobsHeader = () => {
           <Play className="mr-2 h-4 w-4" /> Start
         </Button>
         <Button size="sm" variant="outline" className="text-gray-600">
-          <FileExport className="mr-2 h-4 w-4" /> Export
+          <FileText className="mr-2 h-4 w-4" /> Export
         </Button>
       </div>
     </div>
