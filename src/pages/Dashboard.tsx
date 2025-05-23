@@ -1,76 +1,116 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
-  Activity, 
   Bot, 
   Calendar, 
   CheckCircle, 
   Clock, 
   AlertCircle,
   TrendingUp,
+  TrendingDown,
   Users,
   Server,
-  BarChart3
+  BarChart3,
+  Activity,
+  Settings,
+  Zap,
+  Database,
+  RefreshCcw
 } from 'lucide-react';
+import { DonutChart, TrendChart, BarChartComponent } from '../components/dashboard/Charts';
+import ChartCard from '../components/dashboard/ChartCard';
+import TimeFilter from '../components/dashboard/TimeFilter';
+import DateSelector from '../components/dashboard/DateSelector';
+import AISuggestion from '../components/dashboard/AISuggestion';
 
 const Dashboard = () => {
+  const [activeTimeFilter, setActiveTimeFilter] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+
   const stats = [
     {
-      title: "Running Jobs",
-      value: "12",
-      change: "+2 from yesterday",
-      icon: Activity,
-      color: "text-blue-600"
-    },
-    {
-      title: "Active Robots",
-      value: "8",
-      change: "2 idle",
+      title: "Total Robots",
+      value: "42",
+      change: "+8%",
+      isPositive: true,
       icon: Bot,
-      color: "text-green-600"
+      iconColor: "#262626"
     },
     {
-      title: "Successful Jobs",
-      value: "156",
-      change: "+12% from last week",
-      icon: CheckCircle,
-      color: "text-green-600"
+      title: "Active Jobs",
+      value: "12",
+      change: "+12%",
+      isPositive: true,
+      icon: Activity,
+      iconColor: "#3B82F6"
     },
     {
       title: "Failed Jobs",
       value: "3",
-      change: "-50% from last week",
+      change: "+2%",
+      isPositive: true,
       icon: AlertCircle,
-      color: "text-red-600"
+      iconColor: "#EF4444"
+    },
+    {
+      title: "Queue Items",
+      value: "256",
+      change: "-5%",
+      isPositive: false,
+      icon: Clock,
+      iconColor: "#F59E0B"
+    },
+    {
+      title: "FTE Saving",
+      value: "120h",
+      change: "+15%",
+      isPositive: true,
+      icon: TrendingUp,
+      iconColor: "#10B981"
+    },
+    {
+      title: "Transaction Count",
+      value: "1,987",
+      change: "+7%",
+      isPositive: true,
+      icon: Database,
+      iconColor: "#8B5CF6"
+    },
+    {
+      title: "Total Runtime",
+      value: "320h",
+      change: "+5%",
+      isPositive: true,
+      icon: Clock,
+      iconColor: "#06B6D4"
+    },
+    {
+      title: "Robot Utilization",
+      value: "82%",
+      change: "+3%",
+      isPositive: true,
+      icon: BarChart3,
+      iconColor: "#6366F1"
     }
   ];
 
-  const recentJobs = [
+  const aiSuggestions = [
     {
-      id: "1",
-      name: "Invoice Processing",
-      status: "Successful",
-      robot: "Robot01",
-      startTime: "2024-01-15 10:30:00",
-      duration: "2m 15s"
+      process: "Invoice Processing",
+      suggestion: "Robot kapasitesi artırılarak işlem süresi %25 azaltılabilir",
+      confidence: 95
     },
     {
-      id: "2",
-      name: "Data Migration",
-      status: "Running",
-      robot: "Robot02",
-      startTime: "2024-01-15 10:45:00",
-      duration: "1m 30s"
+      process: "Data Migration",
+      suggestion: "Parallel processing ile throughput %40 artırılabilir",
+      confidence: 87
     },
     {
-      id: "3",
-      name: "Report Generation",
-      status: "Failed",
-      robot: "Robot03",
-      startTime: "2024-01-15 09:15:00",
-      duration: "0m 45s"
+      process: "Report Generation",
+      suggestion: "Cache mekanizması ile response time %60 iyileştirilebilir",
+      confidence: 78
     }
   ];
 
@@ -79,118 +119,89 @@ const Dashboard = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
-          <h1 className="text-2xl font-medium text-gray-900">Dashboard</h1>
-          <p className="text-sm text-gray-500 mt-1">Overview of your automation environment</p>
+          <h1 className="text-2xl font-semibold text-gray-900">Welcome, Admin</h1>
+          <p className="text-sm text-gray-500 mt-1">Here's what's happening with your automation processes</p>
         </div>
         
-        <div className="flex gap-3">
-          <Button size="sm" variant="outline" className="text-gray-600">
-            <Calendar className="mr-2 h-4 w-4" /> Last 7 days
-          </Button>
-          <Button size="sm" className="bg-primary hover:bg-primary/90">
-            <BarChart3 className="mr-2 h-4 w-4" /> View Reports
-          </Button>
+        <div className="flex gap-3 items-center">
+          <DateSelector date="May 19, 2025" onRefresh={() => window.location.reload()} />
         </div>
       </div>
 
-      {/* Statistics Cards */}
+      {/* Statistics Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
           <Card key={index} className="border border-[#F5F5F5] shadow-sm rounded-xl">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-600">
-                {stat.title}
-              </CardTitle>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-              <p className="text-xs text-gray-500 mt-1">{stat.change}</p>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: stat.iconColor }}>
+                  <stat.icon className="h-5 w-5 text-white" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm text-gray-500">{stat.title}</p>
+                <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                <div className="flex items-center gap-1">
+                  {stat.isPositive ? (
+                    <TrendingUp className="h-3 w-3 text-green-600" />
+                  ) : (
+                    <TrendingDown className="h-3 w-3 text-red-600" />
+                  )}
+                  <span className={`text-xs font-medium ${stat.isPositive ? 'text-green-600' : 'text-red-600'}`}>
+                    {stat.change}
+                  </span>
+                  <span className="text-xs text-gray-500">vs last month</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {/* Main Content Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Recent Jobs */}
-        <div className="lg:col-span-2">
-          <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
-            <CardHeader>
-              <CardTitle className="text-lg font-medium text-gray-900">Recent Jobs</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentJobs.map((job) => (
-                  <div key={job.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center space-x-3">
-                      <div className={`w-2 h-2 rounded-full ${
-                        job.status === 'Successful' ? 'bg-green-500' :
-                        job.status === 'Running' ? 'bg-blue-500' : 'bg-red-500'
-                      }`} />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">{job.name}</p>
-                        <p className="text-xs text-gray-500">Robot: {job.robot}</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-500">{job.startTime}</p>
-                      <p className="text-xs text-gray-500">{job.duration}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Quick Actions */}
-        <div>
-          <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
-            <CardHeader>
-              <CardTitle className="text-lg font-medium text-gray-900">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <Button className="w-full justify-start" variant="outline">
-                <Bot className="mr-2 h-4 w-4" />
-                Start New Job
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Users className="mr-2 h-4 w-4" />
-                Manage Robots
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <Server className="mr-2 h-4 w-4" />
-                View Processes
-              </Button>
-              <Button className="w-full justify-start" variant="outline">
-                <TrendingUp className="mr-2 h-4 w-4" />
-                Analytics
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ChartCard title="Job Status Distribution">
+          <DonutChart />
+        </ChartCard>
+        
+        <ChartCard title="Robot Utilization">
+          <BarChartComponent />
+        </ChartCard>
       </div>
 
-      {/* System Health */}
+      {/* Job Performance Trends */}
+      <div className="grid grid-cols-1 gap-6">
+        <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-lg font-medium text-gray-900">Job Performance Trends</CardTitle>
+            <TimeFilter activeFilter={activeTimeFilter} onChange={setActiveTimeFilter} />
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <TrendChart />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* AI Suggestions */}
       <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
         <CardHeader>
-          <CardTitle className="text-lg font-medium text-gray-900">System Health</CardTitle>
+          <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+            <Zap className="h-5 w-5 text-blue-600" />
+            AI Destekli Süreç Önerileri
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">98.5%</div>
-              <p className="text-sm text-gray-500">System Uptime</p>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">2.3s</div>
-              <p className="text-sm text-gray-500">Avg Response Time</p>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-purple-600">156</div>
-              <p className="text-sm text-gray-500">Jobs Completed Today</p>
-            </div>
+          <div className="space-y-4">
+            {aiSuggestions.map((suggestion, index) => (
+              <AISuggestion 
+                key={index}
+                process={suggestion.process}
+                suggestion={suggestion.suggestion}
+                confidence={suggestion.confidence}
+              />
+            ))}
           </div>
         </CardContent>
       </Card>
