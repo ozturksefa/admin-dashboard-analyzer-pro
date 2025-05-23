@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -17,7 +16,9 @@ import {
   ChevronLeft, 
   ChevronRight,
   Search,
-  Columns
+  Columns,
+  Calendar,
+  RotateCcw
 } from 'lucide-react';
 
 interface Process {
@@ -78,6 +79,15 @@ const processes: Process[] = [
   }
 ];
 
+const tabs = [
+  { id: 'processes', label: 'Processes', active: true },
+  { id: 'jobs', label: 'Jobs', active: false },
+  { id: 'apps', label: 'Apps', active: false },
+  { id: 'triggers', label: 'Triggers', active: false },
+  { id: 'packages', label: 'My Packages', active: false },
+  { id: 'logs', label: 'Logs', active: false }
+];
+
 const Processes = () => {
   const [selectedProcesses, setSelectedProcesses] = useState<string[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -112,8 +122,8 @@ const Processes = () => {
 
   const getVersionBadge = (version: string) => (
     <div className="flex items-center gap-1.5">
-      <span>{version}</span>
       <Check className="h-4 w-4 text-green-500" />
+      <span>{version}</span>
     </div>
   );
 
@@ -123,6 +133,7 @@ const Processes = () => {
 
   return (
     <div className="max-w-full">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-medium text-gray-900">Processes</h1>
@@ -134,29 +145,51 @@ const Processes = () => {
         </Button>
       </div>
 
-      {/* Table Controls */}
-      <div className="bg-white p-4 mb-4 rounded-xl border border-[#F5F5F5] shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div className="relative w-full sm:w-auto">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search processes..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 pr-4 py-2 w-full sm:w-[250px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300 text-sm"
-          />
+      {/* Tab Navigation */}
+      <div className="mb-6">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8 overflow-x-auto">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`py-2 px-1 border-b-2 font-medium text-sm whitespace-nowrap ${
+                  tab.active
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </nav>
         </div>
-        
-        <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start">
-          <Button variant="outline" size="sm" className="text-gray-600">
-            <Filter className="mr-2 h-4 w-4" /> Filters
-          </Button>
-          <Button variant="outline" size="sm" className="text-gray-600">
-            <Columns className="mr-2 h-4 w-4" /> Columns
-          </Button>
-          <Button variant="outline" size="sm" className="text-gray-600 px-3">
-            <RefreshCw className="h-4 w-4" />
-          </Button>
+      </div>
+
+      {/* Table Controls */}
+      <div className="bg-white p-4 mb-4 rounded-xl border border-[#F5F5F5] shadow-sm">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+          <div className="relative w-full sm:w-auto">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 pr-4 py-2 w-full sm:w-[250px] border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-300 text-sm"
+            />
+          </div>
+          
+          <div className="flex items-center space-x-2 w-full sm:w-auto justify-between sm:justify-start">
+            <Button variant="outline" size="sm" className="text-gray-600">
+              <Calendar className="mr-2 h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" className="text-gray-600">
+              <Filter className="mr-2 h-4 w-4" />
+            </Button>
+            <Button variant="outline" size="sm" className="text-gray-600 px-3">
+              <RotateCcw className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -171,8 +204,8 @@ const Processes = () => {
                   <div>
                     <h3 className="font-medium text-gray-900">{process.name}</h3>
                     <div className="flex items-center mt-1 text-sm text-gray-500">
-                      <span className="mr-2">Version: {process.version}</span>
-                      <Check className="h-4 w-4 text-green-500" />
+                      <Check className="h-4 w-4 text-green-500 mr-1" />
+                      <span>{process.version}</span>
                     </div>
                   </div>
                 </div>
@@ -182,7 +215,7 @@ const Processes = () => {
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="bg-white">
                     <DropdownMenuItem>View Details</DropdownMenuItem>
                     <DropdownMenuItem>Edit</DropdownMenuItem>
                     <DropdownMenuItem>Delete</DropdownMenuItem>
@@ -213,62 +246,71 @@ const Processes = () => {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-gray-50">
-                <TableRow className="hover:bg-gray-50/50">
-                  <TableHead className="w-12">
+                <TableRow className="hover:bg-gray-50/50 border-b border-gray-200">
+                  <TableHead className="w-12 py-3">
                     <Checkbox 
                       checked={selectedProcesses.length === processes.length && processes.length > 0}
                       onCheckedChange={(checked) => handleSelectAll(!!checked)} 
                     />
                   </TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead>Version</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Entry Point</TableHead>
-                  <TableHead className="max-w-[300px]">Description</TableHead>
-                  <TableHead className="w-12">Actions</TableHead>
+                  <TableHead className="py-3 font-medium text-gray-700">
+                    <div className="flex items-center gap-1">
+                      Name
+                      <ChevronDown className="h-4 w-4" />
+                    </div>
+                  </TableHead>
+                  <TableHead className="py-3 font-medium text-gray-700">Type</TableHead>
+                  <TableHead className="py-3 font-medium text-gray-700">Version</TableHead>
+                  <TableHead className="py-3 font-medium text-gray-700">
+                    <div className="flex items-center gap-1">
+                      Job priority
+                      <ChevronDown className="h-4 w-4" />
+                    </div>
+                  </TableHead>
+                  <TableHead className="py-3 font-medium text-gray-700">Entry point</TableHead>
+                  <TableHead className="py-3 font-medium text-gray-700 max-w-[300px]">Description</TableHead>
+                  <TableHead className="w-12 py-3">
+                    <RefreshCw className="h-4 w-4 text-gray-500" />
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {processes.map((process) => (
                   <TableRow 
                     key={process.id}
-                    className="hover:bg-gray-50 border-b border-gray-100"
+                    className="hover:bg-gray-50 border-b border-gray-100 transition-colors"
                   >
-                    <TableCell>
+                    <TableCell className="py-4">
                       <Checkbox 
                         checked={selectedProcesses.includes(process.id)}
                         onCheckedChange={(checked) => handleSelectProcess(process.id, !!checked)}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4 text-gray-500" />
-                        {process.name}
-                      </div>
+                    <TableCell className="font-medium py-4">
+                      {process.name}
                     </TableCell>
-                    <TableCell>{process.type}</TableCell>
-                    <TableCell>{getVersionBadge(process.version)}</TableCell>
-                    <TableCell>
+                    <TableCell className="py-4">{process.type}</TableCell>
+                    <TableCell className="py-4">{getVersionBadge(process.version)}</TableCell>
+                    <TableCell className="py-4">
                       <div className="flex items-center">
+                        <Equal className="h-4 w-4 text-orange-500 mr-2" />
                         {process.priority}
-                        {getPriorityIcon(process.priority)}
                       </div>
                     </TableCell>
-                    <TableCell>{process.entryPoint}</TableCell>
-                    <TableCell>
-                      <span className="line-clamp-1 max-w-[300px]" title={process.description}>
+                    <TableCell className="py-4">{process.entryPoint}</TableCell>
+                    <TableCell className="py-4">
+                      <span className="line-clamp-1 max-w-[300px] text-gray-700" title={process.description}>
                         {process.description}
                       </span>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right py-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                             <MoreVertical className="h-4 w-4" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
+                        <DropdownMenuContent align="end" className="bg-white">
                           <DropdownMenuItem>View Details</DropdownMenuItem>
                           <DropdownMenuItem>Edit</DropdownMenuItem>
                           <DropdownMenuItem>Delete</DropdownMenuItem>
@@ -281,31 +323,33 @@ const Processes = () => {
             </Table>
           </div>
           
-          {/* Pagination Controls */}
-          <div className="flex items-center justify-between p-4 border-t border-gray-100">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <span>Items per page:</span>
-              <select 
-                className="border border-gray-200 rounded p-1 text-sm"
-                value={itemsPerPage}
-                onChange={(e) => setItemsPerPage(Number(e.target.value))}
-              >
-                <option value={10}>10</option>
-                <option value={25}>25</option>
-                <option value={50}>50</option>
-                <option value={100}>100</option>
-              </select>
+          {/* Pagination */}
+          <div className="flex items-center justify-between p-4 border-t border-gray-100 bg-gray-50">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <span>1 - 1 / 1</span>
             </div>
             
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500">Page {currentPage} of 1</span>
-              <div className="flex gap-1">
-                <Button variant="outline" size="sm" disabled className="p-0 w-8 h-8">
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <Button variant="outline" size="sm" disabled className="p-0 w-8 h-8">
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-4 w-4" />
+                <span className="mx-2">Page 1 / 1</span>
+                <ChevronRight className="h-4 w-4" />
+                <ChevronRight className="h-4 w-4" />
+              </div>
+              
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <span>Items</span>
+                <select 
+                  className="border border-gray-200 rounded p-1 text-sm bg-white"
+                  value={itemsPerPage}
+                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                >
+                  <option value={25}>25</option>
+                  <option value={50}>50</option>
+                  <option value={100}>100</option>
+                </select>
+                <ChevronDown className="h-4 w-4" />
               </div>
             </div>
           </div>
