@@ -12,22 +12,39 @@ interface LayoutProps {
 
 const Layout = ({ children }: LayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [dateRange, setDateRange] = useState({
+    from: new Date(2025, 4, 1), // May 1, 2025
+    to: new Date(2025, 4, 31)   // May 31, 2025
+  });
+
+  const handleRefresh = () => {
+    console.log('Refreshing dashboard data...');
+    // This will trigger a refresh in child components
+    window.dispatchEvent(new CustomEvent('dashboard-refresh'));
+  };
+
+  const handleDateRangeChange = (range: { from: Date; to: Date }) => {
+    setDateRange(range);
+    console.log('Date range changed:', range);
+    // This will trigger a date range change in child components
+    window.dispatchEvent(new CustomEvent('date-range-change', { detail: range }));
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-[#FAFAFA] font-[Inter,sans-serif]">
-      <Header />
+      <Header 
+        onRefresh={handleRefresh}
+        dateRange={dateRange}
+        onDateRangeChange={handleDateRangeChange}
+      />
       <div className="flex flex-1">
         {/* Mobile sidebar */}
         <div className={`fixed inset-0 z-40 md:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-          {/* Background overlay */}
           <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-          
-          {/* Sidebar */}
           <div className="relative flex-1 flex flex-col max-w-xs w-full bg-white">
             <div className="absolute top-0 right-0 -mr-12 pt-2">
               <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(false)}>
                 <X className="h-6 w-6 text-white" />
-                <span className="sr-only">Close sidebar</span>
               </Button>
             </div>
             <div className="h-0 flex-1 overflow-y-auto pt-5 pb-4">
@@ -36,10 +53,8 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
         </div>
         
-        {/* Desktop sidebar */}
         <Sidebar />
         
-        {/* Main content */}
         <main className="flex-1 overflow-auto p-4 sm:p-6 md:p-8">
           <div className="md:hidden mb-4">
             <Button variant="outline" size="sm" onClick={() => setSidebarOpen(true)}>
