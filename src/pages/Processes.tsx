@@ -26,6 +26,7 @@ import {
 import { format } from 'date-fns';
 import ProcessForm from '@/components/processes/ProcessForm';
 import ProcessDetailsModal from '@/components/processes/ProcessDetailsModal';
+import type { DateRange } from 'react-day-picker';
 
 interface Process {
   id: string;
@@ -79,10 +80,7 @@ const Processes = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [environmentFilter, setEnvironmentFilter] = useState('All');
-  const [dateRange, setDateRange] = useState<{ from: Date | undefined; to: Date | undefined }>({
-    from: undefined,
-    to: undefined
-  });
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedProcess, setSelectedProcess] = useState<Process | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -214,7 +212,7 @@ const Processes = () => {
                 <PopoverTrigger asChild>
                   <Button variant="outline" size="sm" className="text-gray-600">
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {dateRange.from ? (
+                    {dateRange?.from ? (
                       dateRange.to ? (
                         `${format(dateRange.from, "MMM dd")} - ${format(dateRange.to, "MMM dd")}`
                       ) : (
@@ -229,9 +227,9 @@ const Processes = () => {
                   <Calendar
                     initialFocus
                     mode="range"
-                    defaultMonth={dateRange.from}
+                    defaultMonth={dateRange?.from}
                     selected={dateRange}
-                    onSelect={(range) => setDateRange(range || { from: undefined, to: undefined })}
+                    onSelect={setDateRange}
                     numberOfMonths={2}
                     className="pointer-events-auto"
                   />
