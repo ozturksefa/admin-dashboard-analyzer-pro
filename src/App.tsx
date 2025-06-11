@@ -16,6 +16,8 @@ import Exceptions from "./pages/Exceptions";
 import Users from "./pages/Users";
 import Roles from "./pages/Roles";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import Layout from "./components/Layout";
 
@@ -28,6 +30,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/" element={<Layout><Index /></Layout>} />
           <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
           <Route path="/robots" element={<Layout><Robots /></Layout>} />
