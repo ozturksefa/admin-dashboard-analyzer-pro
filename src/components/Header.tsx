@@ -13,15 +13,10 @@ const Header = () => {
           <Menu className="h-5 w-5" />
         </Button>
         <div className="hidden md:flex items-center">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg shadow-md flex items-center justify-center mr-3">
-            <div className="relative">
-              <span className="font-bold text-white text-lg">N</span>
-              <div className="absolute -top-1 -right-1 w-2 h-2 bg-cyan-400 rounded-full opacity-80"></div>
-            </div>
+          <div className="w-9 h-9 bg-[#262626] rounded-md flex items-center justify-center text-white mr-3">
+            <span className="font-medium">N</span>
           </div>
-          <span className="text-lg font-semibold text-[#171717] bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Nisus Central RPA
-          </span>
+          <span className="text-lg font-medium text-[#171717]">Nisus Central RPA</span>
         </div>
       </div>
       
