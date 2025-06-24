@@ -18,7 +18,10 @@ import {
   Settings,
   Zap,
   Database,
-  RefreshCcw
+  RefreshCcw,
+  Lightbulb,
+  ChevronRight,
+  ArrowUp
 } from 'lucide-react';
 import { DonutChart, TrendChart, BarChartComponent } from '../components/dashboard/Charts';
 import ChartCard from '../components/dashboard/ChartCard';
@@ -98,19 +101,31 @@ const Dashboard = () => {
 
   const aiSuggestions = [
     {
+      id: 1,
       process: "Invoice Processing",
-      suggestion: "Robot kapasitesi artırılarak işlem süresi %25 azaltılabilir",
-      confidence: 95
+      suggestion: "Increase robot capacity to reduce processing time by 25%",
+      confidence: 95,
+      category: "Performance",
+      impact: "High",
+      estimatedSaving: "15 hours/week"
     },
     {
+      id: 2,
       process: "Data Migration",
-      suggestion: "Parallel processing ile throughput %40 artırılabilir",
-      confidence: 87
+      suggestion: "Implement parallel processing to boost throughput by 40%",
+      confidence: 87,
+      category: "Efficiency",
+      impact: "Medium",
+      estimatedSaving: "8 hours/week"
     },
     {
+      id: 3,
       process: "Report Generation",
-      suggestion: "Cache mekanizması ile response time %60 iyileştirilebilir",
-      confidence: 78
+      suggestion: "Add caching mechanism to improve response time by 60%",
+      confidence: 78,
+      category: "Optimization",
+      impact: "Medium",
+      estimatedSaving: "12 hours/week"
     }
   ];
 
@@ -184,24 +199,106 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* AI Suggestions */}
+      {/* AI-Powered Process Recommendations */}
       <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
-        <CardHeader>
-          <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
-            <Zap className="h-5 w-5 text-blue-600" />
-            AI Destekli Süreç Önerileri
-          </CardTitle>
+        <CardHeader className="pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <Lightbulb className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <CardTitle className="text-lg font-medium text-gray-900">
+                  AI-Powered Process Recommendations
+                </CardTitle>
+                <p className="text-sm text-gray-500 mt-1">
+                  Smart insights to optimize your automation workflows
+                </p>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" className="gap-2">
+              <RefreshCcw className="h-4 w-4" />
+              Refresh
+            </Button>
+          </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-0">
           <div className="space-y-4">
-            {aiSuggestions.map((suggestion, index) => (
-              <AISuggestion 
-                key={index}
-                process={suggestion.process}
-                suggestion={suggestion.suggestion}
-                confidence={suggestion.confidence}
-              />
+            {aiSuggestions.map((suggestion) => (
+              <div 
+                key={suggestion.id}
+                className="group p-4 border border-gray-100 rounded-lg hover:shadow-md hover:border-gray-200 transition-all duration-200 cursor-pointer"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
+                      <Bot className="h-4 w-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-gray-900">{suggestion.process}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">
+                          {suggestion.category}
+                        </span>
+                        <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                          suggestion.impact === 'High' 
+                            ? 'bg-red-100 text-red-700' 
+                            : 'bg-yellow-100 text-yellow-700'
+                        }`}>
+                          {suggestion.impact} Impact
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="text-right">
+                      <div className={`text-sm font-medium ${
+                        suggestion.confidence >= 90 
+                          ? 'text-emerald-600' 
+                          : suggestion.confidence >= 70 
+                          ? 'text-amber-600' 
+                          : 'text-rose-600'
+                      }`}>
+                        {suggestion.confidence}% Confidence
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Save {suggestion.estimatedSaving}
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                  </div>
+                </div>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  {suggestion.suggestion}
+                </p>
+                <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+                  <div className="flex items-center gap-1 text-green-600">
+                    <ArrowUp className="h-3 w-3" />
+                    <span className="text-xs font-medium">Potential improvement</span>
+                  </div>
+                  <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                    Apply Suggestion
+                  </Button>
+                </div>
+              </div>
             ))}
+          </div>
+          
+          <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border border-blue-100">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Zap className="h-4 w-4 text-blue-600" />
+                </div>
+                <div>
+                  <h4 className="font-medium text-gray-900">Want more insights?</h4>
+                  <p className="text-sm text-gray-600">Get personalized recommendations based on your data</p>
+                </div>
+              </div>
+              <Button className="bg-blue-600 hover:bg-blue-700">
+                Generate More
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
