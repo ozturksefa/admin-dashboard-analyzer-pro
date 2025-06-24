@@ -14,9 +14,9 @@ const Header = () => {
         </Button>
         <div className="hidden md:flex items-center">
           <div className="w-9 h-9 bg-[#262626] rounded-md flex items-center justify-center text-white mr-3">
-            <span className="font-medium">U</span>
+            <span className="font-medium">N</span>
           </div>
-          <span className="text-lg font-medium text-[#171717]">UiPath Orchestrator</span>
+          <span className="text-lg font-medium text-[#171717]">Nisus Central RPA</span>
         </div>
       </div>
       
