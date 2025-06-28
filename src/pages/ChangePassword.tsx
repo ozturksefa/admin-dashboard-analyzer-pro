@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -91,7 +90,7 @@ const ChangePassword = () => {
                 <Bot className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Nisus Central RPA</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Nisus Central</h1>
                 <p className="text-lg text-gray-600">RPA Orchestrator</p>
               </div>
             </div>
