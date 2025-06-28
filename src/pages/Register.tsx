@@ -60,7 +60,7 @@ const Register = () => {
                 <Bot className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">Nisus Centrap</h1>
+                <h1 className="text-3xl font-bold text-gray-900">Nisus Central RPA</h1>
                 <p className="text-lg text-gray-600">RPA Orchestrator</p>
               </div>
             </div>
@@ -103,7 +103,7 @@ const Register = () => {
               </div>
               <CardTitle className="text-2xl font-semibold text-center">Create account</CardTitle>
               <CardDescription className="text-center text-gray-600">
-                Get started with Nisus Centrap RPA
+                Get started with Nisus Central RPA
               </CardDescription>
             </CardHeader>
             

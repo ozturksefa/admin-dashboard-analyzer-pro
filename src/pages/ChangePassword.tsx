@@ -66,11 +66,11 @@ const ChangePassword = () => {
 
               <div className="text-center">
                 <Link
-                  to="/dashboard"
+                  to="/login"
                   className="inline-flex items-center text-primary hover:text-primary/80 font-medium"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Dashboard
+                  Back to Login
                 </Link>
               </div>
             </CardContent>
@@ -241,11 +241,11 @@ const ChangePassword = () => {
 
                 <div className="text-center pt-4">
                   <Link
-                    to="/dashboard"
+                    to="/login"
                     className="inline-flex items-center text-primary hover:text-primary/80 font-medium"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Dashboard
+                    Back to Login
                   </Link>
                 </div>
               </form>
