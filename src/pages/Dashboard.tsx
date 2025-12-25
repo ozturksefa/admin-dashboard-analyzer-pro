@@ -28,6 +28,8 @@ import ChartCard from '../components/dashboard/ChartCard';
 import TimeFilter from '../components/dashboard/TimeFilter';
 import DateSelector from '../components/dashboard/DateSelector';
 import AISuggestion from '../components/dashboard/AISuggestion';
+import TopProcesses from '../components/dashboard/TopProcesses';
+import TopQueues from '../components/dashboard/TopQueues';
 
 const Dashboard = () => {
   const [activeTimeFilter, setActiveTimeFilter] = useState<'daily' | 'weekly' | 'monthly'>('daily');
@@ -182,6 +184,29 @@ const Dashboard = () => {
         <ChartCard title="Robot Utilization">
           <BarChartComponent />
         </ChartCard>
+      </div>
+
+      {/* Top Processes & Top Queues Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
+            <CardTitle className="text-lg font-medium text-gray-900">Top Processes</CardTitle>
+            <TimeFilter activeFilter={activeTimeFilter} onChange={setActiveTimeFilter} />
+          </CardHeader>
+          <CardContent>
+            <TopProcesses timeFilter={activeTimeFilter} />
+          </CardContent>
+        </Card>
+        
+        <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
+          <CardHeader className="flex flex-row items-center justify-between pb-4">
+            <CardTitle className="text-lg font-medium text-gray-900">Top Queues</CardTitle>
+            <TimeFilter activeFilter={activeTimeFilter} onChange={setActiveTimeFilter} />
+          </CardHeader>
+          <CardContent>
+            <TopQueues timeFilter={activeTimeFilter} />
+          </CardContent>
+        </Card>
       </div>
 
       {/* Job Performance Trends */}
