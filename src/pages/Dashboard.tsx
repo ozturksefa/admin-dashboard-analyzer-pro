@@ -1,105 +1,84 @@
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from 'react-router-dom';
 import { 
   Bot, 
-  Calendar, 
   CheckCircle, 
   Clock, 
   AlertCircle,
   TrendingUp,
   TrendingDown,
-  Users,
-  Server,
+  Database,
   BarChart3,
   Activity,
-  Settings,
-  Zap,
-  Database,
   RefreshCcw,
   Lightbulb,
   ChevronRight,
-  ArrowUp
+  ArrowUp,
+  Zap,
+  Shield,
+  Bell,
+  ExternalLink
 } from 'lucide-react';
 import { DonutChart, TrendChart, BarChartComponent } from '../components/dashboard/Charts';
 import ChartCard from '../components/dashboard/ChartCard';
 import TimeFilter from '../components/dashboard/TimeFilter';
 import DateSelector from '../components/dashboard/DateSelector';
-import AISuggestion from '../components/dashboard/AISuggestion';
 import TopProcesses from '../components/dashboard/TopProcesses';
 import TopQueues from '../components/dashboard/TopQueues';
+import AutoRefreshControl from '../components/dashboard/AutoRefreshControl';
+import SystemHealth from '../components/dashboard/SystemHealth';
+import RecentAlerts from '../components/dashboard/RecentAlerts';
+import QuickActions from '../components/dashboard/QuickActions';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [activeTimeFilter, setActiveTimeFilter] = useState<'daily' | 'weekly' | 'monthly'>('daily');
+  const { isEnabled, toggle, refresh, lastRefresh, countdown } = useAutoRefresh({ interval: 30 });
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  const stats = [
-    {
-      title: "Total Robots",
-      value: "42",
-      change: "+8%",
-      isPositive: true,
-      icon: Bot,
-      iconColor: "#262626"
-    },
-    {
-      title: "Active Jobs",
-      value: "12",
-      change: "+12%",
-      isPositive: true,
-      icon: Activity,
-      iconColor: "#3B82F6"
-    },
-    {
-      title: "Failed Jobs",
-      value: "3",
-      change: "+2%",
-      isPositive: true,
-      icon: AlertCircle,
-      iconColor: "#EF4444"
-    },
-    {
-      title: "Queue Items",
-      value: "256",
-      change: "-5%",
-      isPositive: false,
-      icon: Clock,
-      iconColor: "#F59E0B"
-    },
-    {
-      title: "FTE Saving",
-      value: "120h",
-      change: "+15%",
-      isPositive: true,
-      icon: TrendingUp,
-      iconColor: "#10B981"
-    },
-    {
-      title: "Transaction Count",
-      value: "1,987",
-      change: "+7%",
-      isPositive: true,
-      icon: Database,
-      iconColor: "#8B5CF6"
-    },
-    {
-      title: "Total Runtime",
-      value: "320h",
-      change: "+5%",
-      isPositive: true,
-      icon: Clock,
-      iconColor: "#06B6D4"
-    },
-    {
-      title: "Robot Utilization",
-      value: "82%",
-      change: "+3%",
-      isPositive: true,
-      icon: BarChart3,
-      iconColor: "#6366F1"
-    }
-  ];
+  const handleRefresh = () => {
+    refresh();
+    setRefreshKey(prev => prev + 1);
+  };
+
+  const statsData = useMemo(() => ({
+    daily: [
+      { title: "Total Robots", value: "42", change: "+8%", isPositive: true, icon: Bot, iconColor: "#262626" },
+      { title: "Active Jobs", value: "12", change: "+12%", isPositive: true, icon: Activity, iconColor: "#3B82F6" },
+      { title: "Failed Jobs", value: "3", change: "+2%", isPositive: false, icon: AlertCircle, iconColor: "#EF4444" },
+      { title: "Queue Items", value: "256", change: "-5%", isPositive: true, icon: Clock, iconColor: "#F59E0B" },
+      { title: "FTE Saving", value: "8h", change: "+15%", isPositive: true, icon: TrendingUp, iconColor: "#10B981" },
+      { title: "Transaction Count", value: "487", change: "+7%", isPositive: true, icon: Database, iconColor: "#8B5CF6" },
+      { title: "Total Runtime", value: "24h", change: "+5%", isPositive: true, icon: Clock, iconColor: "#06B6D4" },
+      { title: "Robot Utilization", value: "82%", change: "+3%", isPositive: true, icon: BarChart3, iconColor: "#6366F1" },
+    ],
+    weekly: [
+      { title: "Total Robots", value: "42", change: "+5%", isPositive: true, icon: Bot, iconColor: "#262626" },
+      { title: "Active Jobs", value: "78", change: "+18%", isPositive: true, icon: Activity, iconColor: "#3B82F6" },
+      { title: "Failed Jobs", value: "12", change: "-3%", isPositive: true, icon: AlertCircle, iconColor: "#EF4444" },
+      { title: "Queue Items", value: "1,456", change: "+8%", isPositive: false, icon: Clock, iconColor: "#F59E0B" },
+      { title: "FTE Saving", value: "56h", change: "+22%", isPositive: true, icon: TrendingUp, iconColor: "#10B981" },
+      { title: "Transaction Count", value: "3,245", change: "+12%", isPositive: true, icon: Database, iconColor: "#8B5CF6" },
+      { title: "Total Runtime", value: "168h", change: "+8%", isPositive: true, icon: Clock, iconColor: "#06B6D4" },
+      { title: "Robot Utilization", value: "78%", change: "-2%", isPositive: false, icon: BarChart3, iconColor: "#6366F1" },
+    ],
+    monthly: [
+      { title: "Total Robots", value: "42", change: "+12%", isPositive: true, icon: Bot, iconColor: "#262626" },
+      { title: "Active Jobs", value: "342", change: "+25%", isPositive: true, icon: Activity, iconColor: "#3B82F6" },
+      { title: "Failed Jobs", value: "45", change: "-8%", isPositive: true, icon: AlertCircle, iconColor: "#EF4444" },
+      { title: "Queue Items", value: "6,234", change: "+15%", isPositive: false, icon: Clock, iconColor: "#F59E0B" },
+      { title: "FTE Saving", value: "240h", change: "+35%", isPositive: true, icon: TrendingUp, iconColor: "#10B981" },
+      { title: "Transaction Count", value: "14,567", change: "+18%", isPositive: true, icon: Database, iconColor: "#8B5CF6" },
+      { title: "Total Runtime", value: "720h", change: "+10%", isPositive: true, icon: Clock, iconColor: "#06B6D4" },
+      { title: "Robot Utilization", value: "85%", change: "+5%", isPositive: true, icon: BarChart3, iconColor: "#6366F1" },
+    ],
+  }), []);
+
+  const stats = statsData[activeTimeFilter];
 
   const aiSuggestions = [
     {
@@ -131,24 +110,65 @@ const Dashboard = () => {
     }
   ];
 
+  const getPeriodLabel = () => {
+    switch (activeTimeFilter) {
+      case 'daily': return 'vs yesterday';
+      case 'weekly': return 'vs last week';
+      case 'monthly': return 'vs last month';
+    }
+  };
+
   return (
     <div className="max-w-full space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Welcome, Admin</h1>
           <p className="text-sm text-gray-500 mt-1">Here's what's happening with your automation processes</p>
         </div>
         
-        <div className="flex gap-3 items-center">
-          <DateSelector date="May 19, 2025" onRefresh={() => window.location.reload()} />
+        <div className="flex flex-wrap gap-3 items-center">
+          <TimeFilter activeFilter={activeTimeFilter} onChange={setActiveTimeFilter} />
+          <AutoRefreshControl 
+            isEnabled={isEnabled}
+            countdown={countdown}
+            lastRefresh={lastRefresh}
+            onToggle={toggle}
+            onRefresh={handleRefresh}
+          />
         </div>
       </div>
+
+      {/* Quick Actions */}
+      <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+            <Zap className="h-5 w-5 text-amber-500" />
+            Quick Actions
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <QuickActions />
+        </CardContent>
+      </Card>
+
+      {/* System Health */}
+      <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+            <Shield className="h-5 w-5 text-green-500" />
+            System Health
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <SystemHealth refreshKey={refreshKey} />
+        </CardContent>
+      </Card>
 
       {/* Statistics Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat, index) => (
-          <Card key={index} className="border border-[#F5F5F5] shadow-sm rounded-xl">
+          <Card key={index} className="border border-[#F5F5F5] shadow-sm rounded-xl hover:shadow-md transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: stat.iconColor }}>
@@ -167,7 +187,7 @@ const Dashboard = () => {
                   <span className={`text-xs font-medium ${stat.isPositive ? 'text-green-600' : 'text-red-600'}`}>
                     {stat.change}
                   </span>
-                  <span className="text-xs text-gray-500">vs last month</span>
+                  <span className="text-xs text-gray-500">{getPeriodLabel()}</span>
                 </div>
               </div>
             </CardContent>
@@ -191,7 +211,15 @@ const Dashboard = () => {
         <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-medium text-gray-900">Top Processes</CardTitle>
-            <TimeFilter activeFilter={activeTimeFilter} onChange={setActiveTimeFilter} />
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-1 text-blue-600 hover:text-blue-700"
+              onClick={() => navigate('/processes')}
+            >
+              View All
+              <ExternalLink className="h-3 w-3" />
+            </Button>
           </CardHeader>
           <CardContent>
             <TopProcesses timeFilter={activeTimeFilter} />
@@ -201,7 +229,15 @@ const Dashboard = () => {
         <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between pb-4">
             <CardTitle className="text-lg font-medium text-gray-900">Top Queues</CardTitle>
-            <TimeFilter activeFilter={activeTimeFilter} onChange={setActiveTimeFilter} />
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="gap-1 text-blue-600 hover:text-blue-700"
+              onClick={() => navigate('/queues')}
+            >
+              View All
+              <ExternalLink className="h-3 w-3" />
+            </Button>
           </CardHeader>
           <CardContent>
             <TopQueues timeFilter={activeTimeFilter} />
@@ -209,12 +245,33 @@ const Dashboard = () => {
         </Card>
       </div>
 
+      {/* Recent Alerts */}
+      <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
+        <CardHeader className="flex flex-row items-center justify-between pb-4">
+          <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+            <Bell className="h-5 w-5 text-orange-500" />
+            Recent Alerts
+          </CardTitle>
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="gap-1 text-blue-600 hover:text-blue-700"
+            onClick={() => navigate('/exceptions')}
+          >
+            View All
+            <ExternalLink className="h-3 w-3" />
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <RecentAlerts refreshKey={refreshKey} />
+        </CardContent>
+      </Card>
+
       {/* Job Performance Trends */}
       <div className="grid grid-cols-1 gap-6">
         <Card className="border border-[#F5F5F5] shadow-sm rounded-xl">
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-lg font-medium text-gray-900">Job Performance Trends</CardTitle>
-            <TimeFilter activeFilter={activeTimeFilter} onChange={setActiveTimeFilter} />
           </CardHeader>
           <CardContent>
             <div className="h-[300px]">
