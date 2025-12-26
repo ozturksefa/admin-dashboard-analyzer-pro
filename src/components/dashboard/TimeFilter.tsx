@@ -9,17 +9,17 @@ interface TimeFilterProps {
 
 const TimeFilter: React.FC<TimeFilterProps> = ({ activeFilter, onChange }) => {
   return (
-    <div className="flex items-center gap-2">
-      {['daily', 'weekly', 'monthly'].map((filter) => (
+    <div className="flex items-center gap-1 p-1 bg-muted rounded-lg">
+      {(['daily', 'weekly', 'monthly'] as const).map((filter) => (
         <button
           key={filter}
           className={cn(
-            "px-4 py-1.5 text-sm rounded-md transition-colors border",
+            "px-3 py-1.5 text-sm rounded-md transition-all font-medium",
             activeFilter === filter
-              ? "bg-gray-900 text-white border-gray-900"
-              : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+              ? "bg-primary text-primary-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground hover:bg-background/50"
           )}
-          onClick={() => onChange(filter as 'daily' | 'weekly' | 'monthly')}
+          onClick={() => onChange(filter)}
         >
           {filter.charAt(0).toUpperCase() + filter.slice(1)}
         </button>
@@ -29,3 +29,4 @@ const TimeFilter: React.FC<TimeFilterProps> = ({ activeFilter, onChange }) => {
 };
 
 export default TimeFilter;
+
