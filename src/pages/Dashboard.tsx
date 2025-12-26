@@ -32,30 +32,22 @@ import {
   Lightbulb,
   ChevronRight,
   ArrowUp,
-  Zap,
-  Shield,
-  Bell,
   ExternalLink,
-  RotateCcw,
   PieChart,
-  LineChart
+  LineChart,
+  Sparkles
 } from 'lucide-react';
 import { DonutChart, TrendChart, BarChartComponent } from '../components/dashboard/Charts';
-import TimeFilter from '../components/dashboard/TimeFilter';
 import TopProcesses from '../components/dashboard/TopProcesses';
 import TopQueues from '../components/dashboard/TopQueues';
-import AutoRefreshControl from '../components/dashboard/AutoRefreshControl';
-import SystemHealth from '../components/dashboard/SystemHealth';
-import RecentAlerts from '../components/dashboard/RecentAlerts';
-import QuickActions from '../components/dashboard/QuickActions';
-import ThemeToggle from '../components/dashboard/ThemeToggle';
+import DashboardHeader from '../components/dashboard/DashboardHeader';
 import DraggableWidget from '../components/dashboard/DraggableWidget';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { useDashboardPreferences } from '../hooks/useDashboardPreferences';
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { preferences, setPreference, setWidgetOrder, toggleWidgetCollapse, resetPreferences } = useDashboardPreferences();
+  const { preferences, setPreference, setWidgetOrder, toggleWidgetCollapse, setDateRange, resetPreferences } = useDashboardPreferences();
   const { isEnabled, toggle, refresh, lastRefresh, countdown } = useAutoRefresh({ 
     interval: preferences.autoRefreshInterval,
     enabled: preferences.autoRefreshEnabled 
@@ -164,34 +156,6 @@ const Dashboard = () => {
     const isCollapsed = preferences.collapsedWidgets.includes(widgetId);
     
     switch (widgetId) {
-      case 'quick-actions':
-        return (
-          <DraggableWidget
-            key={widgetId}
-            id={widgetId}
-            title="Quick Actions"
-            icon={<Zap className="h-5 w-5 text-amber-500" />}
-            isCollapsed={isCollapsed}
-            onToggleCollapse={() => toggleWidgetCollapse(widgetId)}
-          >
-            <QuickActions />
-          </DraggableWidget>
-        );
-      
-      case 'system-health':
-        return (
-          <DraggableWidget
-            key={widgetId}
-            id={widgetId}
-            title="System Health"
-            icon={<Shield className="h-5 w-5 text-green-500" />}
-            isCollapsed={isCollapsed}
-            onToggleCollapse={() => toggleWidgetCollapse(widgetId)}
-          >
-            <SystemHealth refreshKey={refreshKey} />
-          </DraggableWidget>
-        );
-      
       case 'stats':
         return (
           <div key={widgetId} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -298,31 +262,6 @@ const Dashboard = () => {
           </div>
         );
       
-      case 'recent-alerts':
-        return (
-          <DraggableWidget
-            key={widgetId}
-            id={widgetId}
-            title="Recent Alerts"
-            icon={<Bell className="h-5 w-5 text-orange-500" />}
-            isCollapsed={isCollapsed}
-            onToggleCollapse={() => toggleWidgetCollapse(widgetId)}
-            headerActions={
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className="gap-1 text-blue-600 hover:text-blue-700"
-                onClick={() => navigate('/exceptions')}
-              >
-                View All
-                <ExternalLink className="h-3 w-3" />
-              </Button>
-            }
-          >
-            <RecentAlerts refreshKey={refreshKey} />
-          </DraggableWidget>
-        );
-      
       case 'performance-trends':
         return (
           <DraggableWidget
@@ -424,7 +363,7 @@ const Dashboard = () => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                    <Zap className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                    <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
                     <h4 className="font-medium text-card-foreground">Want more insights?</h4>
@@ -447,33 +386,18 @@ const Dashboard = () => {
   return (
     <div className="max-w-full space-y-6">
       {/* Header */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between mb-6 gap-4">
-        <div>
-          <h1 className="text-2xl font-semibold text-foreground">Welcome, Admin</h1>
-          <p className="text-sm text-muted-foreground mt-1">Here's what's happening with your automation processes</p>
-        </div>
-        
-        <div className="flex flex-wrap gap-3 items-center">
-          <TimeFilter activeFilter={preferences.timeFilter} onChange={handleTimeFilterChange} />
-          <AutoRefreshControl 
-            isEnabled={isEnabled}
-            countdown={countdown}
-            lastRefresh={lastRefresh}
-            onToggle={toggle}
-            onRefresh={handleRefresh}
-          />
-          <ThemeToggle />
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="h-9 w-9"
-            onClick={resetPreferences}
-            title="Reset layout"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <DashboardHeader
+        timeFilter={preferences.timeFilter}
+        onTimeFilterChange={handleTimeFilterChange}
+        dateRange={preferences.dateRange}
+        onDateRangeChange={setDateRange}
+        isAutoRefreshEnabled={isEnabled}
+        countdown={countdown}
+        lastRefresh={lastRefresh}
+        onAutoRefreshToggle={toggle}
+        onRefresh={handleRefresh}
+        onResetPreferences={resetPreferences}
+      />
 
       {/* Widgets */}
       <DndContext
