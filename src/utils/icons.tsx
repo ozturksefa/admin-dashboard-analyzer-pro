@@ -9,7 +9,8 @@ import {
   AlertCircle,
   Users,
   Shield,
-  Settings
+  Settings,
+  TrendingUp
 } from "lucide-react";
 
 export const sidebarItems = [
@@ -17,6 +18,11 @@ export const sidebarItems = [
     title: "Dashboard",
     href: "/",
     icon: LayoutDashboard
+  },
+  {
+    title: "Executive Dashboard",
+    href: "/executive",
+    icon: TrendingUp
   },
   {
     title: "Robots",

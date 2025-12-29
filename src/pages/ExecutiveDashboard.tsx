@@ -20,14 +20,9 @@ import {
 } from '@dnd-kit/sortable';
 import { 
   Bot, 
-  CheckCircle, 
-  Clock, 
   AlertCircle,
   TrendingUp,
   TrendingDown,
-  Database,
-  BarChart3,
-  Activity,
   RefreshCcw,
   Lightbulb,
   ChevronRight,
@@ -35,9 +30,22 @@ import {
   ExternalLink,
   PieChart,
   LineChart,
-  Sparkles
+  Sparkles,
+  DollarSign,
+  Clock,
+  BarChart3,
+  Building2,
+  Target
 } from 'lucide-react';
 import { DonutChart, TrendChart, BarChartComponent } from '../components/dashboard/Charts';
+import { 
+  ROITrendChart, 
+  DepartmentSavingsChart, 
+  FTESavingsChart, 
+  PerformanceGaugeChart,
+  TransactionsVolumeChart 
+} from '../components/dashboard/ExecutiveCharts';
+import ExecutiveSummary from '../components/dashboard/ExecutiveSummary';
 import TopProcesses from '../components/dashboard/TopProcesses';
 import TopQueues from '../components/dashboard/TopQueues';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
@@ -45,7 +53,7 @@ import DraggableWidget from '../components/dashboard/DraggableWidget';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { useDashboardPreferences } from '../hooks/useDashboardPreferences';
 
-const Dashboard = () => {
+const ExecutiveDashboard = () => {
   const navigate = useNavigate();
   const { preferences, setPreference, setWidgetOrder, toggleWidgetCollapse, setDateRange, resetPreferences } = useDashboardPreferences();
   const { isEnabled, toggle, refresh, lastRefresh, countdown } = useAutoRefresh({ 
@@ -79,41 +87,6 @@ const Dashboard = () => {
     setPreference('timeFilter', filter);
   };
 
-  const statsData = useMemo(() => ({
-    daily: [
-      { title: "Total Robots", value: "42", change: "+8%", isPositive: true, icon: Bot, iconColor: "#262626" },
-      { title: "Active Jobs", value: "12", change: "+12%", isPositive: true, icon: Activity, iconColor: "#3B82F6" },
-      { title: "Failed Jobs", value: "3", change: "+2%", isPositive: false, icon: AlertCircle, iconColor: "#EF4444" },
-      { title: "Queue Items", value: "256", change: "-5%", isPositive: true, icon: Clock, iconColor: "#F59E0B" },
-      { title: "FTE Saving", value: "8h", change: "+15%", isPositive: true, icon: TrendingUp, iconColor: "#10B981" },
-      { title: "Transaction Count", value: "487", change: "+7%", isPositive: true, icon: Database, iconColor: "#8B5CF6" },
-      { title: "Total Runtime", value: "24h", change: "+5%", isPositive: true, icon: Clock, iconColor: "#06B6D4" },
-      { title: "Robot Utilization", value: "82%", change: "+3%", isPositive: true, icon: BarChart3, iconColor: "#6366F1" },
-    ],
-    weekly: [
-      { title: "Total Robots", value: "42", change: "+5%", isPositive: true, icon: Bot, iconColor: "#262626" },
-      { title: "Active Jobs", value: "78", change: "+18%", isPositive: true, icon: Activity, iconColor: "#3B82F6" },
-      { title: "Failed Jobs", value: "12", change: "-3%", isPositive: true, icon: AlertCircle, iconColor: "#EF4444" },
-      { title: "Queue Items", value: "1,456", change: "+8%", isPositive: false, icon: Clock, iconColor: "#F59E0B" },
-      { title: "FTE Saving", value: "56h", change: "+22%", isPositive: true, icon: TrendingUp, iconColor: "#10B981" },
-      { title: "Transaction Count", value: "3,245", change: "+12%", isPositive: true, icon: Database, iconColor: "#8B5CF6" },
-      { title: "Total Runtime", value: "168h", change: "+8%", isPositive: true, icon: Clock, iconColor: "#06B6D4" },
-      { title: "Robot Utilization", value: "78%", change: "-2%", isPositive: false, icon: BarChart3, iconColor: "#6366F1" },
-    ],
-    monthly: [
-      { title: "Total Robots", value: "42", change: "+12%", isPositive: true, icon: Bot, iconColor: "#262626" },
-      { title: "Active Jobs", value: "342", change: "+25%", isPositive: true, icon: Activity, iconColor: "#3B82F6" },
-      { title: "Failed Jobs", value: "45", change: "-8%", isPositive: true, icon: AlertCircle, iconColor: "#EF4444" },
-      { title: "Queue Items", value: "6,234", change: "+15%", isPositive: false, icon: Clock, iconColor: "#F59E0B" },
-      { title: "FTE Saving", value: "240h", change: "+35%", isPositive: true, icon: TrendingUp, iconColor: "#10B981" },
-      { title: "Transaction Count", value: "14,567", change: "+18%", isPositive: true, icon: Database, iconColor: "#8B5CF6" },
-      { title: "Total Runtime", value: "720h", change: "+10%", isPositive: true, icon: Clock, iconColor: "#06B6D4" },
-      { title: "Robot Utilization", value: "85%", change: "+5%", isPositive: true, icon: BarChart3, iconColor: "#6366F1" },
-    ],
-  }), []);
-
-  const stats = statsData[preferences.timeFilter];
-
   const aiSuggestions = [
     {
       id: 1,
@@ -122,7 +95,7 @@ const Dashboard = () => {
       confidence: 95,
       category: "Performance",
       impact: "High",
-      estimatedSaving: "15 hours/week"
+      estimatedSaving: "$15K/month"
     },
     {
       id: 2,
@@ -131,7 +104,7 @@ const Dashboard = () => {
       confidence: 87,
       category: "Efficiency",
       impact: "Medium",
-      estimatedSaving: "8 hours/week"
+      estimatedSaving: "$8K/month"
     },
     {
       id: 3,
@@ -140,17 +113,9 @@ const Dashboard = () => {
       confidence: 78,
       category: "Optimization",
       impact: "Medium",
-      estimatedSaving: "12 hours/week"
+      estimatedSaving: "$12K/month"
     }
   ];
-
-  const getPeriodLabel = () => {
-    switch (preferences.timeFilter) {
-      case 'daily': return 'vs yesterday';
-      case 'weekly': return 'vs last week';
-      case 'monthly': return 'vs last month';
-    }
-  };
 
   const renderWidget = (widgetId: string) => {
     const isCollapsed = preferences.collapsedWidgets.includes(widgetId);
@@ -158,33 +123,8 @@ const Dashboard = () => {
     switch (widgetId) {
       case 'stats':
         return (
-          <div key={widgetId} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((stat, index) => (
-              <Card key={index} className="border border-border shadow-sm rounded-xl hover:shadow-md transition-shadow bg-card">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: stat.iconColor }}>
-                      <stat.icon className="h-5 w-5 text-white" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <p className="text-sm text-muted-foreground">{stat.title}</p>
-                    <p className="text-2xl font-bold text-card-foreground">{stat.value}</p>
-                    <div className="flex items-center gap-1">
-                      {stat.isPositive ? (
-                        <TrendingUp className="h-3 w-3 text-green-600" />
-                      ) : (
-                        <TrendingDown className="h-3 w-3 text-red-600" />
-                      )}
-                      <span className={`text-xs font-medium ${stat.isPositive ? 'text-green-600' : 'text-red-600'}`}>
-                        {stat.change}
-                      </span>
-                      <span className="text-xs text-muted-foreground">{getPeriodLabel()}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+          <div key={widgetId}>
+            <ExecutiveSummary timeFilter={preferences.timeFilter} />
           </div>
         );
       
@@ -192,26 +132,26 @@ const Dashboard = () => {
         return (
           <div key={widgetId} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <DraggableWidget
-              id="chart-donut"
-              title="Job Status Distribution"
-              icon={<PieChart className="h-5 w-5 text-blue-500" />}
-              isCollapsed={preferences.collapsedWidgets.includes('chart-donut')}
-              onToggleCollapse={() => toggleWidgetCollapse('chart-donut')}
+              id="chart-roi-trend"
+              title="ROI & Cost Savings Trend"
+              icon={<TrendingUp className="h-5 w-5 text-emerald-500" />}
+              isCollapsed={preferences.collapsedWidgets.includes('chart-roi-trend')}
+              onToggleCollapse={() => toggleWidgetCollapse('chart-roi-trend')}
             >
-              <div className="h-[280px]">
-                <DonutChart timeFilter={preferences.timeFilter} />
+              <div className="h-[320px]">
+                <ROITrendChart timeFilter={preferences.timeFilter} />
               </div>
             </DraggableWidget>
             
             <DraggableWidget
-              id="chart-bar"
-              title="Robot Utilization"
-              icon={<BarChart3 className="h-5 w-5 text-purple-500" />}
-              isCollapsed={preferences.collapsedWidgets.includes('chart-bar')}
-              onToggleCollapse={() => toggleWidgetCollapse('chart-bar')}
+              id="chart-dept-savings"
+              title="Cost Savings by Department"
+              icon={<Building2 className="h-5 w-5 text-blue-500" />}
+              isCollapsed={preferences.collapsedWidgets.includes('chart-dept-savings')}
+              onToggleCollapse={() => toggleWidgetCollapse('chart-dept-savings')}
             >
-              <div className="h-[280px]">
-                <BarChartComponent timeFilter={preferences.timeFilter} />
+              <div className="h-[320px]">
+                <DepartmentSavingsChart timeFilter={preferences.timeFilter} />
               </div>
             </DraggableWidget>
           </div>
@@ -221,8 +161,49 @@ const Dashboard = () => {
         return (
           <div key={widgetId} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <DraggableWidget
+              id="chart-fte-savings"
+              title="FTE Hours Saved by Category"
+              icon={<Clock className="h-5 w-5 text-indigo-500" />}
+              isCollapsed={preferences.collapsedWidgets.includes('chart-fte-savings')}
+              onToggleCollapse={() => toggleWidgetCollapse('chart-fte-savings')}
+            >
+              <div className="h-[320px]">
+                <FTESavingsChart timeFilter={preferences.timeFilter} />
+              </div>
+            </DraggableWidget>
+            
+            <DraggableWidget
+              id="chart-transactions"
+              title="Transactions Volume & Value"
+              icon={<BarChart3 className="h-5 w-5 text-amber-500" />}
+              isCollapsed={preferences.collapsedWidgets.includes('chart-transactions')}
+              onToggleCollapse={() => toggleWidgetCollapse('chart-transactions')}
+            >
+              <div className="h-[320px]">
+                <TransactionsVolumeChart timeFilter={preferences.timeFilter} />
+              </div>
+            </DraggableWidget>
+          </div>
+        );
+      
+      case 'performance-trends':
+        return (
+          <div key={widgetId} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <DraggableWidget
+              id="chart-performance"
+              title="Automation Performance Metrics"
+              icon={<Target className="h-5 w-5 text-purple-500" />}
+              isCollapsed={preferences.collapsedWidgets.includes('chart-performance')}
+              onToggleCollapse={() => toggleWidgetCollapse('chart-performance')}
+            >
+              <div className="h-[280px]">
+                <PerformanceGaugeChart timeFilter={preferences.timeFilter} />
+              </div>
+            </DraggableWidget>
+            
+            <DraggableWidget
               id="top-processes"
-              title="Top Processes"
+              title="Top Performing Processes"
               isCollapsed={preferences.collapsedWidgets.includes('top-processes')}
               onToggleCollapse={() => toggleWidgetCollapse('top-processes')}
               headerActions={
@@ -242,7 +223,7 @@ const Dashboard = () => {
             
             <DraggableWidget
               id="top-queues"
-              title="Top Queues"
+              title="Queue Performance"
               isCollapsed={preferences.collapsedWidgets.includes('top-queues')}
               onToggleCollapse={() => toggleWidgetCollapse('top-queues')}
               headerActions={
@@ -262,30 +243,14 @@ const Dashboard = () => {
           </div>
         );
       
-      case 'performance-trends':
-        return (
-          <DraggableWidget
-            key={widgetId}
-            id={widgetId}
-            title="Job Performance Trends"
-            icon={<LineChart className="h-5 w-5 text-blue-500" />}
-            isCollapsed={isCollapsed}
-            onToggleCollapse={() => toggleWidgetCollapse(widgetId)}
-          >
-            <div className="h-[300px]">
-              <TrendChart timeFilter={preferences.timeFilter} />
-            </div>
-          </DraggableWidget>
-        );
-      
       case 'ai-recommendations':
         return (
           <DraggableWidget
             key={widgetId}
             id={widgetId}
-            title="AI-Powered Process Recommendations"
+            title="AI-Powered ROI Optimization Recommendations"
             icon={
-              <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded flex items-center justify-center">
+              <div className="w-6 h-6 bg-gradient-to-r from-emerald-500 to-blue-600 rounded flex items-center justify-center">
                 <Lightbulb className="h-4 w-4 text-white" />
               </div>
             }
@@ -306,19 +271,19 @@ const Dashboard = () => {
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                        <Bot className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      <div className="w-10 h-10 bg-gradient-to-br from-emerald-100 to-blue-100 dark:from-emerald-900 dark:to-blue-900 rounded-full flex items-center justify-center">
+                        <DollarSign className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-card-foreground">{suggestion.process}</h3>
+                        <h3 className="font-semibold text-card-foreground">{suggestion.process}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-xs font-medium rounded-full">
                             {suggestion.category}
                           </span>
                           <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
                             suggestion.impact === 'High' 
-                              ? 'bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300' 
-                              : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300'
+                              ? 'bg-emerald-100 dark:bg-emerald-900 text-emerald-700 dark:text-emerald-300' 
+                              : 'bg-amber-100 dark:bg-amber-900 text-amber-700 dark:text-amber-300'
                           }`}>
                             {suggestion.impact} Impact
                           </span>
@@ -327,7 +292,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       <div className="text-right">
-                        <div className={`text-sm font-medium ${
+                        <div className={`text-sm font-semibold ${
                           suggestion.confidence >= 90 
                             ? 'text-emerald-600' 
                             : suggestion.confidence >= 70 
@@ -336,8 +301,8 @@ const Dashboard = () => {
                         }`}>
                           {suggestion.confidence}% Confidence
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          Save {suggestion.estimatedSaving}
+                        <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400">
+                          {suggestion.estimatedSaving}
                         </div>
                       </div>
                       <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -347,31 +312,31 @@ const Dashboard = () => {
                     {suggestion.suggestion}
                   </p>
                   <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-                    <div className="flex items-center gap-1 text-green-600">
-                      <ArrowUp className="h-3 w-3" />
-                      <span className="text-xs font-medium">Potential improvement</span>
+                    <div className="flex items-center gap-1 text-emerald-600">
+                      <TrendingUp className="h-3 w-3" />
+                      <span className="text-xs font-medium">Potential ROI improvement</span>
                     </div>
                     <Button variant="ghost" size="sm" className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900">
-                      Apply Suggestion
+                      Implement Now
                     </Button>
                   </div>
                 </div>
               ))}
             </div>
             
-            <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg border border-blue-100 dark:border-blue-800">
+            <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-blue-50 dark:from-emerald-950 dark:to-blue-950 rounded-lg border border-emerald-100 dark:border-emerald-800">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center">
-                    <Sparkles className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                  <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-blue-500 rounded-full flex items-center justify-center">
+                    <Sparkles className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-card-foreground">Want more insights?</h4>
-                    <p className="text-sm text-muted-foreground">Get personalized recommendations based on your data</p>
+                    <h4 className="font-semibold text-card-foreground">Unlock More Savings</h4>
+                    <p className="text-sm text-muted-foreground">Get AI-powered insights to maximize your automation ROI</p>
                   </div>
                 </div>
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Generate More
+                <Button className="bg-gradient-to-r from-emerald-500 to-blue-600 hover:from-emerald-600 hover:to-blue-700 text-white border-0">
+                  Generate Report
                 </Button>
               </div>
             </div>
@@ -397,6 +362,8 @@ const Dashboard = () => {
         onAutoRefreshToggle={toggle}
         onRefresh={handleRefresh}
         onResetPreferences={resetPreferences}
+        title="Executive Dashboard"
+        subtitle="RPA ROI & Performance Analytics"
       />
 
       {/* Widgets */}
@@ -418,4 +385,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default ExecutiveDashboard;
