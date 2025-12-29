@@ -18,6 +18,8 @@ interface DashboardHeaderProps {
   onAutoRefreshToggle: () => void;
   onRefresh: () => void;
   onResetPreferences: () => void;
+  title?: string;
+  subtitle?: string;
 }
 
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
@@ -31,15 +33,17 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onAutoRefreshToggle,
   onRefresh,
   onResetPreferences,
+  title = "Welcome, Admin",
+  subtitle = "Here's what's happening with your automation processes",
 }) => {
   return (
     <div className="flex flex-col gap-4 mb-6">
       {/* Top row: Title and Theme */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Welcome, Admin</h1>
+          <h1 className="text-2xl font-semibold text-foreground">{title}</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Here's what's happening with your automation processes
+            {subtitle}
           </p>
         </div>
         <ThemeToggle />
