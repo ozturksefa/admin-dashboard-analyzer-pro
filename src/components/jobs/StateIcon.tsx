@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, Loader, StopCircle } from 'lucide-react';
+import { CheckCircle, Clock, StopCircle, Play, XCircle } from 'lucide-react';
 import { Job } from '../../data/jobsData';
 
 interface StateIconProps {
@@ -10,11 +10,17 @@ interface StateIconProps {
 export const StateIcon = ({ state }: StateIconProps) => {
   switch (state) {
     case 'Successful':
-      return <Check className="h-5 w-5 text-green-500" />;
+      return <CheckCircle className="h-4 w-4 text-success" />;
+    case 'Running':
+      return <Play className="h-4 w-4 text-info fill-info" />;
     case 'Pending':
-      return <Loader className="h-5 w-5 text-amber-500 animate-spin" />;
+      return <Clock className="h-4 w-4 text-warning" />;
     case 'Stopped':
-      return <StopCircle className="h-5 w-5 text-gray-500" />;
+      return <StopCircle className="h-4 w-4 text-muted-foreground" />;
+    case 'Faulted':
+      return <XCircle className="h-4 w-4 text-destructive" />;
+    default:
+      return null;
   }
 };
 
