@@ -12,6 +12,17 @@ export interface Job {
   duration: string;
   source: 'Manual' | 'Assistant' | 'Schedule';
   queueName?: string;
+  // Job specific parameters
+  transactionsTotal: number;
+  transactionsSuccessful: number;
+  transactionsFailed: number;
+  itemsProcessed: number;
+  retryCount: number;
+  cpuUsage: number;
+  memoryUsage: number;
+  inputArgs?: Record<string, string>;
+  outputData?: Record<string, string>;
+  errorMessage?: string;
 }
 
 export const jobsData: Job[] = [
@@ -27,7 +38,16 @@ export const jobsData: Job[] = [
     ended: '3 minutes ago',
     duration: '00:02:34',
     source: 'Manual',
-    queueName: 'InvoiceQueue'
+    queueName: 'InvoiceQueue',
+    transactionsTotal: 25,
+    transactionsSuccessful: 25,
+    transactionsFailed: 0,
+    itemsProcessed: 25,
+    retryCount: 0,
+    cpuUsage: 12,
+    memoryUsage: 245,
+    inputArgs: { 'FilePath': 'C:/Data/input.xlsx', 'BatchSize': '25' },
+    outputData: { 'ProcessedCount': '25', 'Status': 'Complete' }
   },
   {
     id: '2',
@@ -41,7 +61,15 @@ export const jobsData: Job[] = [
     ended: '-',
     duration: '00:15:22',
     source: 'Schedule',
-    queueName: 'InvoiceQueue'
+    queueName: 'InvoiceQueue',
+    transactionsTotal: 150,
+    transactionsSuccessful: 89,
+    transactionsFailed: 2,
+    itemsProcessed: 91,
+    retryCount: 3,
+    cpuUsage: 45,
+    memoryUsage: 512,
+    inputArgs: { 'Vendor': 'All', 'DateRange': '2024-01' }
   },
   {
     id: '3',
@@ -55,7 +83,16 @@ export const jobsData: Job[] = [
     ended: '45 minutes ago',
     duration: '00:15:00',
     source: 'Manual',
-    queueName: 'CustomerQueue'
+    queueName: 'CustomerQueue',
+    transactionsTotal: 50,
+    transactionsSuccessful: 42,
+    transactionsFailed: 8,
+    itemsProcessed: 42,
+    retryCount: 5,
+    cpuUsage: 28,
+    memoryUsage: 380,
+    inputArgs: { 'Region': 'EMEA', 'CustomerType': 'Enterprise' },
+    errorMessage: 'Invalid customer data format in row 43'
   },
   {
     id: '4',
@@ -69,7 +106,16 @@ export const jobsData: Job[] = [
     ended: '1 hour ago',
     duration: '01:00:00',
     source: 'Assistant',
-    queueName: 'DataQueue'
+    queueName: 'DataQueue',
+    transactionsTotal: 500,
+    transactionsSuccessful: 498,
+    transactionsFailed: 2,
+    itemsProcessed: 498,
+    retryCount: 2,
+    cpuUsage: 65,
+    memoryUsage: 780,
+    inputArgs: { 'Source': 'SAP', 'Table': 'BKPF' },
+    outputData: { 'RecordsExtracted': '498', 'FileSize': '12.5MB' }
   },
   {
     id: '5',
@@ -83,7 +129,16 @@ export const jobsData: Job[] = [
     ended: '4 hours ago',
     duration: '01:00:00',
     source: 'Manual',
-    queueName: 'ReportQueue'
+    queueName: 'ReportQueue',
+    transactionsTotal: 12,
+    transactionsSuccessful: 12,
+    transactionsFailed: 0,
+    itemsProcessed: 12,
+    retryCount: 0,
+    cpuUsage: 35,
+    memoryUsage: 420,
+    inputArgs: { 'ReportType': 'Monthly', 'Format': 'PDF' },
+    outputData: { 'ReportsGenerated': '12', 'OutputPath': '/reports/2024/' }
   },
   {
     id: '6',
@@ -97,7 +152,16 @@ export const jobsData: Job[] = [
     ended: '25 minutes ago',
     duration: '00:05:00',
     source: 'Schedule',
-    queueName: 'EmailQueue'
+    queueName: 'EmailQueue',
+    transactionsTotal: 200,
+    transactionsSuccessful: 145,
+    transactionsFailed: 55,
+    itemsProcessed: 145,
+    retryCount: 10,
+    cpuUsage: 78,
+    memoryUsage: 890,
+    inputArgs: { 'Template': 'Newsletter', 'Recipients': 'All' },
+    errorMessage: 'SMTP connection timeout after 30 seconds'
   },
   {
     id: '7',
@@ -111,7 +175,15 @@ export const jobsData: Job[] = [
     ended: '-',
     duration: '-',
     source: 'Schedule',
-    queueName: 'PaymentQueue'
+    queueName: 'PaymentQueue',
+    transactionsTotal: 0,
+    transactionsSuccessful: 0,
+    transactionsFailed: 0,
+    itemsProcessed: 0,
+    retryCount: 0,
+    cpuUsage: 0,
+    memoryUsage: 0,
+    inputArgs: { 'Bank': 'HSBC', 'AccountType': 'Corporate' }
   },
   {
     id: '8',
@@ -125,7 +197,15 @@ export const jobsData: Job[] = [
     ended: '-',
     duration: '00:10:15',
     source: 'Assistant',
-    queueName: 'HRQueue'
+    queueName: 'HRQueue',
+    transactionsTotal: 75,
+    transactionsSuccessful: 45,
+    transactionsFailed: 0,
+    itemsProcessed: 45,
+    retryCount: 1,
+    cpuUsage: 32,
+    memoryUsage: 356,
+    inputArgs: { 'System': 'Workday', 'SyncType': 'Full' }
   },
   {
     id: '9',
@@ -139,7 +219,16 @@ export const jobsData: Job[] = [
     ended: '1 hour 45 minutes ago',
     duration: '00:15:00',
     source: 'Manual',
-    queueName: 'InventoryQueue'
+    queueName: 'InventoryQueue',
+    transactionsTotal: 320,
+    transactionsSuccessful: 280,
+    transactionsFailed: 40,
+    itemsProcessed: 280,
+    retryCount: 8,
+    cpuUsage: 55,
+    memoryUsage: 620,
+    inputArgs: { 'Warehouse': 'WH-001', 'Category': 'Electronics' },
+    errorMessage: 'SKU mismatch detected for 40 items'
   },
   {
     id: '10',
@@ -153,7 +242,16 @@ export const jobsData: Job[] = [
     ended: '2 hours ago',
     duration: '01:00:00',
     source: 'Manual',
-    queueName: 'ContractQueue'
+    queueName: 'ContractQueue',
+    transactionsTotal: 30,
+    transactionsSuccessful: 18,
+    transactionsFailed: 0,
+    itemsProcessed: 18,
+    retryCount: 0,
+    cpuUsage: 22,
+    memoryUsage: 290,
+    inputArgs: { 'ContractType': 'Annual', 'AutoRenew': 'true' },
+    outputData: { 'Renewed': '18', 'Pending': '12' }
   }
 ];
 
