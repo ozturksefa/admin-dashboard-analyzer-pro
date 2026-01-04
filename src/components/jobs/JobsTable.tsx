@@ -3,8 +3,9 @@ import React from 'react';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Bot, MoreVertical, ArrowRight, Info } from 'lucide-react';
+import { Bot, MoreVertical, ArrowRight, ArrowUp, ArrowDown, Info, Clock } from 'lucide-react';
 import { Job } from '../../data/jobsData';
 import StateIcon from './StateIcon';
 
@@ -15,6 +16,26 @@ interface JobsTableProps {
   handleSelectJob: (id: string, checked: boolean) => void;
 }
 
+const getPriorityIcon = (priority: string) => {
+  switch (priority) {
+    case 'High':
+      return <ArrowUp className="h-3 w-3 text-destructive" />;
+    case 'Low':
+      return <ArrowDown className="h-3 w-3 text-muted-foreground" />;
+    default:
+      return <ArrowRight className="h-3 w-3 text-muted-foreground" />;
+  }
+};
+
+const getPriorityBadge = (priority: string) => {
+  const variants: Record<string, string> = {
+    High: 'bg-destructive/10 text-destructive border-destructive/20',
+    Normal: 'bg-muted text-muted-foreground border-border',
+    Low: 'bg-muted/50 text-muted-foreground border-border',
+  };
+  return variants[priority] || variants.Normal;
+};
+
 const JobsTable = ({ 
   jobs, 
   selectedJobs, 
@@ -22,34 +43,32 @@ const JobsTable = ({
   handleSelectJob 
 }: JobsTableProps) => {
   return (
-    <div className="bg-white rounded-xl border border-[#F5F5F5] shadow-sm overflow-hidden">
+    <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="bg-gray-50">
-            <TableRow className="hover:bg-gray-50/50">
+          <TableHeader className="bg-muted/50">
+            <TableRow className="hover:bg-muted/30">
               <TableHead className="w-12">
                 <Checkbox 
                   checked={selectedJobs.length === jobs.length && jobs.length > 0}
                   onCheckedChange={(checked) => handleSelectAll(!!checked)} 
                 />
               </TableHead>
-              <TableHead>Process Name</TableHead>
-              <TableHead>Connected Machine</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>State</TableHead>
-              <TableHead>Priority</TableHead>
-              <TableHead>Started</TableHead>
-              <TableHead>Ended</TableHead>
-              <TableHead>Source</TableHead>
-              <TableHead className="w-12">Info</TableHead>
-              <TableHead className="w-12">Actions</TableHead>
+              <TableHead className="text-foreground font-semibold">Process Name</TableHead>
+              <TableHead className="text-foreground font-semibold">Machine</TableHead>
+              <TableHead className="text-foreground font-semibold">Queue</TableHead>
+              <TableHead className="text-foreground font-semibold">State</TableHead>
+              <TableHead className="text-foreground font-semibold">Duration</TableHead>
+              <TableHead className="text-foreground font-semibold">Priority</TableHead>
+              <TableHead className="text-foreground font-semibold">Source</TableHead>
+              <TableHead className="w-12"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {jobs.map((job) => (
               <TableRow 
                 key={job.id}
-                className="hover:bg-gray-50 border-b border-gray-100"
+                className="hover:bg-muted/30 border-b border-border"
               >
                 <TableCell>
                   <Checkbox 
@@ -59,31 +78,55 @@ const JobsTable = ({
                 </TableCell>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
-                    <Bot className="h-4 w-4 text-gray-500" />
-                    {job.name}
+                    <div className="p-1.5 rounded bg-primary/10">
+                      <Bot className="h-3.5 w-3.5 text-primary" />
+                    </div>
+                    <div>
+                      <span className="text-foreground">{job.name}</span>
+                      <p className="text-xs text-muted-foreground">{job.type}</p>
+                    </div>
                   </div>
                 </TableCell>
-                <TableCell>{job.machine}</TableCell>
-                <TableCell>{job.type}</TableCell>
+                <TableCell className="text-muted-foreground text-sm">{job.machine}</TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="text-xs font-normal">
+                    {job.queueName || '-'}
+                  </Badge>
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1.5">
                     <StateIcon state={job.state} />
-                    <span>{job.state}</span>
+                    <span className="text-sm">{job.state}</span>
+                    {job.exceptionType && (
+                      <Badge 
+                        variant="outline" 
+                        className={`text-xs ml-1 ${
+                          job.exceptionType === 'System' 
+                            ? 'border-destructive/50 text-destructive' 
+                            : 'border-warning/50 text-warning'
+                        }`}
+                      >
+                        {job.exceptionType}
+                      </Badge>
+                    )}
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center gap-1.5">
-                    <span>{job.priority}</span>
-                    {job.priority === 'Normal' && <ArrowRight className="h-4 w-4" />}
+                  <div className="flex items-center gap-1.5 text-sm">
+                    <Clock className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="font-mono text-foreground">{job.duration}</span>
                   </div>
                 </TableCell>
-                <TableCell>{job.started}</TableCell>
-                <TableCell>{job.ended}</TableCell>
-                <TableCell>{job.source}</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                    <Info className="h-4 w-4 text-gray-500" />
-                  </Button>
+                  <Badge variant="outline" className={`text-xs ${getPriorityBadge(job.priority)}`}>
+                    {getPriorityIcon(job.priority)}
+                    <span className="ml-1">{job.priority}</span>
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="secondary" className="text-xs font-normal">
+                    {job.source}
+                  </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -94,8 +137,9 @@ const JobsTable = ({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem>View Details</DropdownMenuItem>
+                      <DropdownMenuItem>View Logs</DropdownMenuItem>
                       <DropdownMenuItem>Stop Job</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
+                      <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
